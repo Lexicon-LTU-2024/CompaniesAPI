@@ -23,6 +23,24 @@ namespace Companies.API
                 app.UseSwaggerUI();
             }
 
+            //app.Map("/hej", builder =>
+            //{
+            //    builder.Use(async (context, next) =>
+            //    {
+            //        Console.WriteLine("1. log BEFORE the next delegate");
+
+            //        await next.Invoke();
+
+            //        Console.WriteLine("3. log AFTER the next delegate");
+            //    });
+
+            //    builder.Run(async context =>
+            //    {
+            //        Console.WriteLine($"2. log in the Run method");
+            //        await context.Response.WriteAsync("Hello from /hej path");
+            //    });
+            //});
+
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
