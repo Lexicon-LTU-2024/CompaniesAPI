@@ -15,6 +15,7 @@ namespace Companies.API.Data
         }
 
         public DbSet<Company> Companies { get; set; } = default!;
+        public DbSet<Companies.API.Models.Entities.Employee> Employee { get; set; } = default!;
     }
 
     
