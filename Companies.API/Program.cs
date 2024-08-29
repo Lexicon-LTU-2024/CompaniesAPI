@@ -15,6 +15,7 @@ namespace Companies.API
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DBContext") ?? throw new InvalidOperationException("Connection string 'DBContext' not found.")));
 
             builder.Services.AddControllers();
+            builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

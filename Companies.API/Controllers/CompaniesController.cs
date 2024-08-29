@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Http;
 
 
@@ -12,26 +14,25 @@ namespace Companies.API.Controllers
     public class CompaniesController : ControllerBase
     {
         private readonly DBContext db;
+        private readonly IMapper mapper;
 
-        public CompaniesController(DBContext context)
+        public CompaniesController(DBContext context, IMapper mapper)
         {
             db = context;
+            this.mapper = mapper;
         }
 
         // GET: api/Companies
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CompanyDto>>> GetCompany()
         {
-            var companies = db.Companies;
-            var companyDtos = companies.Select(c => new CompanyDto
-            {
-                Id = c.Id,
-                Name = c.Name,
-                Address = c.Address,
-                Country = c.Country
-            });
+            //OBS!!!!! IEnumerable!!!!
+            //var companies = await db.Companies.ToListAsync();
+            //IEnumerable<CompanyDto> dtos = mapper.Map<IEnumerable<CompanyDto>>(companies);
 
-            return Ok(await companyDtos.ToListAsync());
+            IEnumerable<CompanyDto> companyDtos = await db.Companies.ProjectTo<CompanyDto>(mapper.ConfigurationProvider).ToListAsync();
+
+            return Ok(companyDtos);
         }
 
       
@@ -45,13 +46,7 @@ namespace Companies.API.Controllers
                 return NotFound();
             }
 
-            var dto = new CompanyDto
-            {
-                Id = company.Id,
-                Name = company.Name,
-                Address = company.Address,
-                Country = company.Country
-            };
+            var dto = mapper.Map<CompanyDto>(company);
 
             return Ok(dto);
          }
