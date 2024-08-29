@@ -14,6 +14,8 @@ namespace Companies.API.Data
         {
         }
 
-        public DbSet<Company> Company { get; set; } = default!;
+        public DbSet<Company> Companies { get; set; } = default!;
     }
+
+    
 }
