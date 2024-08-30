@@ -7,80 +7,80 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Http;
 
 
-namespace Companies.API.Controllers
+namespace Companies.API.Controllers;
+
+[Route("api/companies")]
+[ApiController]
+public class CompaniesController : ControllerBase
 {
-    [Route("api/companies")]
-    [ApiController]
-    public class CompaniesController : ControllerBase
+    private readonly DBContext _db;
+    private readonly IMapper _mapper;
+
+    public CompaniesController(DBContext context, IMapper mapper)
     {
-        private readonly DBContext _db;
-        private readonly IMapper _mapper;
+        _db = context;
+        this._mapper = mapper;
+    }
 
-        public CompaniesController(DBContext context, IMapper mapper)
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<CompanyDto>>> GetCompany(bool includeEmployees)
+    {
+        var companyDtos = includeEmployees ? _mapper.Map<IEnumerable<CompanyDto>>(await _db.Companies.Include(c => c.Employees).ToListAsync())
+                                           : _mapper.Map<IEnumerable<CompanyDto>>(await _db.Companies.ToListAsync());
+        return Ok(companyDtos);
+    }
+
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<CompanyDto>> GetCompany(Guid id)
+    {
+        var company = await _db.Companies.FindAsync(id);
+
+        if (company == null)
         {
-            _db = context;
-            this._mapper = mapper;
+            return NotFound();
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<CompanyDto>>> GetCompany()
-        {
-            IEnumerable<CompanyDto> companyDtos = await _db.Companies.ProjectTo<CompanyDto>(_mapper.ConfigurationProvider).ToListAsync();
-            return Ok(companyDtos);
-        }
+        var dto = _mapper.Map<CompanyDto>(company);
 
-        [HttpGet("{id:guid}")]
-        public async Task<ActionResult<CompanyDto>> GetCompany(Guid id)
-        {
-            var company = await _db.Companies.FindAsync(id);
+        return Ok(dto);
+     }
 
-            if (company == null)
-            {
-                return NotFound();
-            }
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutCompany(Guid id, CompanyUpdateDto dto)
+    {
+        if (id != dto.Id)  return BadRequest();
 
-            var dto = _mapper.Map<CompanyDto>(company);
+        var existingCompany = await _db.Companies.FindAsync(id);
 
-            return Ok(dto);
-         }
+        if(existingCompany is null) return NotFound();
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCompany(Guid id, CompanyUpdateDto dto)
-        {
-            if (id != dto.Id)  return BadRequest();
+        _mapper.Map(dto, existingCompany);
+        await _db.SaveChangesAsync();
 
-            var existingCompany = await _db.Companies.FindAsync(id);
+        return Ok(_mapper.Map<CompanyDto>(existingCompany)); //For demo!
+    }
 
-            if(existingCompany is null) return NotFound();
+    [HttpPost]
+    public async Task<ActionResult<Company>> PostCompany(CompanyCreateDto dto)
+    {
+        var company = _mapper.Map<Company>(dto);
+        _db.Companies.Add(company);
+        await _db.SaveChangesAsync();
 
-            _mapper.Map(dto, existingCompany);
-            await _db.SaveChangesAsync();
+        var createdCompanyDto = _mapper.Map<CompanyDto>(company);
 
-            return Ok(_mapper.Map<CompanyDto>(existingCompany)); //For demo!
-        }
+        return CreatedAtAction(nameof(GetCompany), new { id = createdCompanyDto.Id }, createdCompanyDto);
+    }
 
-        [HttpPost]
-        public async Task<ActionResult<Company>> PostCompany(CompanyCreateDto dto)
-        {
-            var company = _mapper.Map<Company>(dto);
-            _db.Companies.Add(company);
-            await _db.SaveChangesAsync();
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteCompany(Guid id)
+    {
+        var company = await _db.Companies.FindAsync(id);
+        if (company == null) return NotFound();
 
-            var createdCompanyDto = _mapper.Map<CompanyDto>(company);
+        _db.Companies.Remove(company);
+        await _db.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetCompany), new { id = createdCompanyDto.Id }, createdCompanyDto);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCompany(Guid id)
-        {
-            var company = await _db.Companies.FindAsync(id);
-            if (company == null) return NotFound();
-
-            _db.Companies.Remove(company);
-            await _db.SaveChangesAsync();
-
-            return NoContent();
-        }
+        return NoContent();
     }
 }
