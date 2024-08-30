@@ -14,6 +14,7 @@ namespace Companies.API.Data
             CreateMap<CompanyUpdateDto, Company>();
 
             CreateMap<Employee, EmployeeDto>().ReverseMap();
+            CreateMap<EmployeeUpdateDto, Employee>().ReverseMap();
         }
     }
 }
