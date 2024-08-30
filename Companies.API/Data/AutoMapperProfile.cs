@@ -7,6 +7,8 @@ namespace Companies.API.Data
         public AutoMapperProfile()
         {
             CreateMap<Company, CompanyDto>();
+            CreateMap<CompanyCreateDto, Company>();
+
             CreateMap<Employee, EmployeeDto>();
         }
     }

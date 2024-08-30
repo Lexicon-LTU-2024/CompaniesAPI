@@ -17,12 +17,12 @@ namespace Companies.API.Controllers
     public class EmployeesController : ControllerBase
     {
         private readonly DBContext _db;
-        private readonly IMapper mapper;
+        private readonly IMapper _mapper;
 
         public EmployeesController(DBContext context, IMapper mapper)
         {
             _db = context;
-            this.mapper = mapper;
+            this._mapper = mapper;
         }
 
         // GET: api/Employees
@@ -36,7 +36,7 @@ namespace Companies.API.Controllers
 
             var employees = await _db.Employee.Where(e => e.CompanyId.Equals(companyId)).ToListAsync();
 
-            var employeeDtos = mapper.Map<IEnumerable<EmployeeDto>>(employees);
+            var employeeDtos = _mapper.Map<IEnumerable<EmployeeDto>>(employees);
 
             return Ok(employeeDtos);
         }
