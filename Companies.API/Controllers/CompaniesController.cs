@@ -53,36 +53,22 @@ namespace Companies.API.Controllers
 
         //// PUT: api/Companies/5
         //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutCompany(Guid id, Company company)
-        //{
-        //    if (id != company.Id)
-        //    {
-        //        return BadRequest();
-        //    }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutCompany(Guid id, CompanyUpdateDto dto)
+        {
+            if (id != dto.Id)  return BadRequest();
 
-        //    _context.Entry(company).State = EntityState.Modified;
+            var existingCompany = await _db.Companies.FindAsync(id);
 
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!CompanyExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
+            if(existingCompany is null) return NotFound();
 
-        //    return NoContent();
-        //}
+            _mapper.Map(dto, existingCompany);
+            await _db.SaveChangesAsync();
 
-     
+            return Ok(_mapper.Map<CompanyDto>(existingCompany)); //For demo!
+        }
+
+
         [HttpPost]
         public async Task<ActionResult<Company>> PostCompany(CompanyCreateDto dto)
         {
