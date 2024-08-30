@@ -13,7 +13,7 @@ namespace Companies.API.Data
             CreateMap<CompanyCreateDto, Company>();
             CreateMap<CompanyUpdateDto, Company>();
 
-            CreateMap<Employee, EmployeeDto>();
+            CreateMap<Employee, EmployeeDto>().ReverseMap();
         }
     }
 }

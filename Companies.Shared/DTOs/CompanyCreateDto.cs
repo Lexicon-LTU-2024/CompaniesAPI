@@ -9,6 +9,6 @@ namespace Companies.Shared.DTOs
 {
     public record CompanyCreateDto : CompanyManipulationDto
     {
-       
+        public IEnumerable<EmployeeDto>? Employees { get; init; }
     }
 }
