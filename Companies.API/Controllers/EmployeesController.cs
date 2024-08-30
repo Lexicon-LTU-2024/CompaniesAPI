@@ -97,25 +97,21 @@ namespace Companies.API.Controllers
         //    return CreatedAtAction("GetEmployee", new { id = employee.Id }, employee);
         //}
 
-        //// DELETE: api/Employees/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteEmployee(Guid id)
-        //{
-        //    var employee = await _context.Employee.FindAsync(id);
-        //    if (employee == null)
-        //    {
-        //        return NotFound();
-        //    }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteEmployee(Guid companyId, Guid id)
+        {
+            var companyExists = await _db.Companies
+                                    .AnyAsync(c => c.Id.Equals(companyId));
 
-        //    _context.Employee.Remove(employee);
-        //    await _context.SaveChangesAsync();
+            if (!companyExists) return new NotFoundObjectResult("Company not found");
 
-        //    return NoContent();
-        //}
+            var employee = await _db.Employee.FirstOrDefaultAsync(e => e.Id.Equals(id) && e.CompanyId.Equals(companyId));
+            if (employee == null) return NotFound();
 
-        //private bool EmployeeExists(Guid id)
-        //{
-        //    return _context.Employee.Any(e => e.Id == id);
-        //}
+            _db.Employee.Remove(employee);
+            await _db.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }

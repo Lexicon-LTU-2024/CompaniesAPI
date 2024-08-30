@@ -22,20 +22,13 @@ namespace Companies.API.Controllers
             this._mapper = mapper;
         }
 
-        // GET: api/Companies
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CompanyDto>>> GetCompany()
         {
-            //OBS!!!!! IEnumerable!!!!
-            //var companies = await db.Companies.ToListAsync();
-            //IEnumerable<CompanyDto> dtos = mapper.Map<IEnumerable<CompanyDto>>(companies);
-
             IEnumerable<CompanyDto> companyDtos = await _db.Companies.ProjectTo<CompanyDto>(_mapper.ConfigurationProvider).ToListAsync();
-
             return Ok(companyDtos);
         }
 
-      
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<CompanyDto>> GetCompany(Guid id)
         {
@@ -51,8 +44,6 @@ namespace Companies.API.Controllers
             return Ok(dto);
          }
 
-        //// PUT: api/Companies/5
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCompany(Guid id, CompanyUpdateDto dto)
         {
@@ -68,7 +59,6 @@ namespace Companies.API.Controllers
             return Ok(_mapper.Map<CompanyDto>(existingCompany)); //For demo!
         }
 
-
         [HttpPost]
         public async Task<ActionResult<Company>> PostCompany(CompanyCreateDto dto)
         {
@@ -81,25 +71,16 @@ namespace Companies.API.Controllers
             return CreatedAtAction(nameof(GetCompany), new { id = createdCompanyDto.Id }, createdCompanyDto);
         }
 
-        //// DELETE: api/Companies/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteCompany(Guid id)
-        //{
-        //    var company = await _context.Company.FindAsync(id);
-        //    if (company == null)
-        //    {
-        //        return NotFound();
-        //    }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCompany(Guid id)
+        {
+            var company = await _db.Companies.FindAsync(id);
+            if (company == null) return NotFound();
 
-        //    _context.Company.Remove(company);
-        //    await _context.SaveChangesAsync();
+            _db.Companies.Remove(company);
+            await _db.SaveChangesAsync();
 
-        //    return NoContent();
-        //}
-
-        //private bool CompanyExists(Guid id)
-        //{
-        //    return _context.Company.Any(e => e.Id == id);
-        //}
+            return NoContent();
+        }
     }
 }
