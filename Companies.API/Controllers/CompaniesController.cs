@@ -36,8 +36,8 @@ public class CompaniesController : ControllerBase
         //var dto2 = await _db.Companies.ProjectTo<CompanyDto>(_mapper.ConfigurationProvider).ToListAsync();
         //var dto3 = await _mapper.ProjectTo<CompanyDto>(_db.Companies).ToListAsync();
 
-        var companyDtos = includeEmployees ? _mapper.Map<IEnumerable<CompanyDto>>(await _companyRepository.GetCompaniesAsync(true))
-                                           : _mapper.Map<IEnumerable<CompanyDto>>(await _companyRepository.GetCompaniesAsync());
+        var companyDtos = includeEmployees ? _mapper.Map<IEnumerable<CompanyDto>>(await _companyRepository.GetCompaniesAsync(trackChanges: false, includeEmployees: true))
+                                           : _mapper.Map<IEnumerable<CompanyDto>>(await _companyRepository.GetCompaniesAsync(trackChanges: false));
         return Ok(companyDtos);
     }
 
@@ -79,7 +79,7 @@ public class CompaniesController : ControllerBase
     public async Task<ActionResult<Company>> PostCompany(CompanyCreateDto dto)
     {
         var company = _mapper.Map<Company>(dto);
-        _db.Companies.Add(company);
+        await _companyRepository.CreateAsync(company);
         await _db.SaveChangesAsync();
 
         var createdCompanyDto = _mapper.Map<CompanyDto>(company);
@@ -93,7 +93,7 @@ public class CompaniesController : ControllerBase
         var company = await _companyRepository.GetCompanyAsync(id);
         if (company == null) return NotFound();
 
-        _db.Companies.Remove(company);
+        _companyRepository.Delete(company);
         await _db.SaveChangesAsync();
 
         return NoContent();

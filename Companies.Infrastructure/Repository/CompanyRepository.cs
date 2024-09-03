@@ -23,9 +23,24 @@ public class CompanyRepository : ICompanyRepository
         return await _db.Companies.FirstOrDefaultAsync(c => c.Id.Equals(id));
     }
 
-    public async Task<IEnumerable<Company>> GetCompaniesAsync(bool includeEmployees = false)
+    public async Task<IEnumerable<Company>> GetCompaniesAsync(bool trackChanges, bool includeEmployees = false)
     {
         return includeEmployees ? await _db.Companies.Include(c => c.Employees).ToListAsync() :
                                   await _db.Companies.ToListAsync();
+    }
+
+    public async Task CreateAsync(Company company)
+    {
+        await _db.AddAsync(company);
+    }
+
+    public void Update(Company company)
+    {
+        _db.Update(company);
+    }
+
+    public void Delete(Company company)
+    {
+        _db.Remove(company);
     }
 }
