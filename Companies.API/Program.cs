@@ -13,7 +13,8 @@ namespace Companies.API
 
             // Add services to the container.
             builder.Services.ConfigureSql(builder.Configuration);
-            builder.Services.AddControllers()
+            builder.Services.AddControllers(configure => configure.ReturnHttpNotAcceptable = true)
+                           // .AddXmlDataContractSerializerFormatters()
                             .AddNewtonsoftJson();
 
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
