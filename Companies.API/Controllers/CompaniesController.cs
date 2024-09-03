@@ -17,13 +17,12 @@ namespace Companies.API.Controllers;
 [ApiController]
 public class CompaniesController : ControllerBase
 {
-    private readonly DBContext _db;
     private readonly IMapper _mapper;
     private readonly ICompanyRepository _companyRepository;
 
-    public CompaniesController(DBContext context, IMapper mapper, ICompanyRepository companyRepository)
+    public CompaniesController(IMapper mapper, ICompanyRepository companyRepository)
     {
-        _db = context;
+       
         _mapper = mapper;
         _companyRepository = companyRepository;
     }
@@ -94,6 +93,9 @@ public class CompaniesController : ControllerBase
         if (company == null) return NotFound();
 
         _companyRepository.Delete(company);
+        _companyRepository.CreateAsync();
+        _companyRepository.CreateAsync();
+        _companyRepository.Update();
         await _db.SaveChangesAsync();
 
         return NoContent();
