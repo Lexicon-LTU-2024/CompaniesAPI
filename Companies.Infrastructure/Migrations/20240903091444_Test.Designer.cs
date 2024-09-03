@@ -4,16 +4,19 @@ using Companies.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Companies.API.Migrations
+namespace Companies.Infrastructure.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20240903091444_Test")]
+    partial class Test
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +25,7 @@ namespace Companies.API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Companies.API.Models.Entities.Company", b =>
+            modelBuilder.Entity("Domain.Models.Entities.Company", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -46,7 +49,7 @@ namespace Companies.API.Migrations
                     b.ToTable("Companies");
                 });
 
-            modelBuilder.Entity("Companies.API.Models.Entities.Employee", b =>
+            modelBuilder.Entity("Domain.Models.Entities.Employee", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -75,9 +78,9 @@ namespace Companies.API.Migrations
                     b.ToTable("Employee");
                 });
 
-            modelBuilder.Entity("Companies.API.Models.Entities.Employee", b =>
+            modelBuilder.Entity("Domain.Models.Entities.Employee", b =>
                 {
-                    b.HasOne("Companies.API.Models.Entities.Company", "Company")
+                    b.HasOne("Domain.Models.Entities.Company", "Company")
                         .WithMany("Employees")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -86,7 +89,7 @@ namespace Companies.API.Migrations
                     b.Navigation("Company");
                 });
 
-            modelBuilder.Entity("Companies.API.Models.Entities.Company", b =>
+            modelBuilder.Entity("Domain.Models.Entities.Company", b =>
                 {
                     b.Navigation("Employees");
                 });
