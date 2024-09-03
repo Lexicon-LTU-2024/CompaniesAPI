@@ -1,4 +1,6 @@
-﻿namespace Companies.API.Extensions;
+﻿using Companies.Infrastructure.Data;
+
+namespace Companies.API.Extensions;
 
 public static class ServiceExtensions
 {

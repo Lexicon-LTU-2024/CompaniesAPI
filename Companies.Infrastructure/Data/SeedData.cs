@@ -1,7 +1,10 @@
 ﻿using Bogus;
+using Domain.Models.Entities;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Companies.API.Data
+namespace Companies.Infrastructure.Data
 {
     public static class SeedData
     {
