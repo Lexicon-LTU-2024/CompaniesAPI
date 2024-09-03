@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Companies.API.Data;
+using Companies.API.Extensions;
 
 namespace Companies.API
 {
@@ -11,25 +12,14 @@ namespace Companies.API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddDbContext<DBContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DBContext") ?? throw new InvalidOperationException("Connection string 'DBContext' not found.")));
-
+            builder.Services.ConfigureSql(builder.Configuration);
             builder.Services.AddControllers()
                             .AddNewtonsoftJson();
 
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.ConfigureCors();
+            builder.Services.ConfigureOpenApi();
 
-            builder.Services.AddCors(builder =>
-            {
-                builder.AddPolicy("AllowAll", p =>
-                    p.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader());
-                     
-            });
 
             var app = builder.Build();
 
