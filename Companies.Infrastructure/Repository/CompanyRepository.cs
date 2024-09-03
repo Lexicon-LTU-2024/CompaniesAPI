@@ -9,38 +9,19 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Companies.Infrastructure.Repository;
-public class CompanyRepository : ICompanyRepository
+public class CompanyRepository : RepositoryBase<Company>, ICompanyRepository
 {
-    private readonly DBContext _db;
+    public CompanyRepository(DBContext db) : base(db){}
 
-    public CompanyRepository(DBContext db)
+    public async Task<Company?> GetCompanyAsync(Guid id, bool trackChanges)
     {
-        _db = db;
-    }
-
-    public async Task<Company?> GetCompanyAsync(Guid id)
-    {
-        return await _db.Companies.FirstOrDefaultAsync(c => c.Id.Equals(id));
+        return await FindByCondition(c => c.Id.Equals(id), trackChanges)
+                    .FirstOrDefaultAsync();
     }
 
     public async Task<IEnumerable<Company>> GetCompaniesAsync(bool trackChanges, bool includeEmployees = false)
     {
-        return includeEmployees ? await _db.Companies.Include(c => c.Employees).ToListAsync() :
-                                  await _db.Companies.ToListAsync();
-    }
-
-    public async Task CreateAsync(Company company)
-    {
-        await _db.AddAsync(company);
-    }
-
-    public void Update(Company company)
-    {
-        _db.Update(company);
-    }
-
-    public void Delete(Company company)
-    {
-        _db.Remove(company);
+        return includeEmployees ? await FindAll(trackChanges).Include(c => c.Employees).ToListAsync() :
+                                  await FindAll(trackChanges).ToListAsync();
     }
 }

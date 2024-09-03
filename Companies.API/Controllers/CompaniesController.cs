@@ -45,7 +45,7 @@ public class CompaniesController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<CompanyDto>> GetCompany(Guid id)
     {
-        var company = await _uoW.CompanyRepository.GetCompanyAsync(id);
+        var company = await _uoW.CompanyRepository.GetCompanyAsync(id, trackChanges: false);
 
         if (company == null)
         {
@@ -64,7 +64,7 @@ public class CompaniesController : ControllerBase
     {
         if (id != dto.Id)  return BadRequest();
 
-        var existingCompany = await _uoW.CompanyRepository.GetCompanyAsync(id);
+        var existingCompany = await _uoW.CompanyRepository.GetCompanyAsync(id, trackChanges: true);
 
         if(existingCompany is null) return NotFound();
 
@@ -89,7 +89,7 @@ public class CompaniesController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCompany(Guid id)
     {
-        var company = await _uoW.CompanyRepository.GetCompanyAsync(id);
+        var company = await _uoW.CompanyRepository.GetCompanyAsync(id, trackChanges: false);
         if (company == null) return NotFound();
 
         _uoW.CompanyRepository.Delete(company);

@@ -4,7 +4,7 @@ namespace Domain.Contracts;
 public interface ICompanyRepository
 {
     Task<IEnumerable<Company>> GetCompaniesAsync(bool trackChanges, bool includeEmployees = false);
-    Task<Company?> GetCompanyAsync(Guid id);
+    Task<Company?> GetCompanyAsync(Guid id, bool trackChanges);
 
     Task CreateAsync(Company company);
     void Update(Company company);
