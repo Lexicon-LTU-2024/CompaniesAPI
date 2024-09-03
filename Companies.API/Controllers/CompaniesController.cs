@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Companies.Infrastructure.Data;
+using Companies.Infrastructure.Repository;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.Query;
 
 
 namespace Companies.API.Controllers;
@@ -16,11 +18,13 @@ public class CompaniesController : ControllerBase
 {
     private readonly DBContext _db;
     private readonly IMapper _mapper;
+    private readonly ICompanyRepository _companyRepository;
 
-    public CompaniesController(DBContext context, IMapper mapper)
+    public CompaniesController(DBContext context, IMapper mapper, ICompanyRepository companyRepository)
     {
         _db = context;
-        this._mapper = mapper;
+        _mapper = mapper;
+        _companyRepository = companyRepository;
     }
 
     [HttpGet]
@@ -31,15 +35,17 @@ public class CompaniesController : ControllerBase
         //var dto2 = await _db.Companies.ProjectTo<CompanyDto>(_mapper.ConfigurationProvider).ToListAsync();
         //var dto3 = await _mapper.ProjectTo<CompanyDto>(_db.Companies).ToListAsync();
 
-        var companyDtos = includeEmployees ? _mapper.Map<IEnumerable<CompanyDto>>(await _db.Companies.Include(c => c.Employees).ToListAsync())
-                                           : _mapper.Map<IEnumerable<CompanyDto>>(await _db.Companies.ToListAsync());
+        var companyDtos = includeEmployees ? _mapper.Map<IEnumerable<CompanyDto>>(await GetCompaniesAsync(true))
+                                           : _mapper.Map<IEnumerable<CompanyDto>>(await GetCompaniesAsync());
         return Ok(companyDtos);
     }
+
+  
 
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<CompanyDto>> GetCompany(Guid id)
     {
-        var company = await _db.Companies.FindAsync(id);
+        var company = await GetCompanyAsync(id);
 
         if (company == null)
         {
@@ -49,14 +55,16 @@ public class CompaniesController : ControllerBase
         var dto = _mapper.Map<CompanyDto>(company);
 
         return Ok(dto);
-     }
+    }
+
+  
 
     [HttpPut("{id}")]
     public async Task<IActionResult> PutCompany(Guid id, CompanyUpdateDto dto)
     {
         if (id != dto.Id)  return BadRequest();
 
-        var existingCompany = await _db.Companies.FindAsync(id);
+        var existingCompany = await GetCompanyAsync(id);
 
         if(existingCompany is null) return NotFound();
 
@@ -81,7 +89,7 @@ public class CompaniesController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCompany(Guid id)
     {
-        var company = await _db.Companies.FindAsync(id);
+        var company = await GetCompanyAsync(id);
         if (company == null) return NotFound();
 
         _db.Companies.Remove(company);

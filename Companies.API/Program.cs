@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Companies.API.Extensions;
 using Companies.Infrastructure.Data;
+using Companies.Infrastructure.Repository;
 
 namespace Companies.API
 {
@@ -20,6 +21,7 @@ namespace Companies.API
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
             builder.Services.ConfigureCors();
             builder.Services.ConfigureOpenApi();
+            builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 
 
             var app = builder.Build();
