@@ -22,8 +22,7 @@ namespace Companies.API
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
             builder.Services.ConfigureCors();
             builder.Services.ConfigureOpenApi();
-            builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
-
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             var app = builder.Build();
 
