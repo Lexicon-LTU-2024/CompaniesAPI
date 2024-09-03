@@ -25,6 +25,11 @@ public class CompaniesController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CompanyDto>>> GetCompany(bool includeEmployees)
     {
+
+        //var dto = await _db.Companies.Select(c => new CompanyDto { Address = c.Address, Name = c.Name, Id = c.Id }).ToListAsync();
+        //var dto2 = await _db.Companies.ProjectTo<CompanyDto>(_mapper.ConfigurationProvider).ToListAsync();
+        //var dto3 = await _mapper.ProjectTo<CompanyDto>(_db.Companies).ToListAsync();
+
         var companyDtos = includeEmployees ? _mapper.Map<IEnumerable<CompanyDto>>(await _db.Companies.Include(c => c.Employees).ToListAsync())
                                            : _mapper.Map<IEnumerable<CompanyDto>>(await _db.Companies.ToListAsync());
         return Ok(companyDtos);
