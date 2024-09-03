@@ -35,8 +35,8 @@ public class CompaniesController : ControllerBase
         //var dto2 = await _db.Companies.ProjectTo<CompanyDto>(_mapper.ConfigurationProvider).ToListAsync();
         //var dto3 = await _mapper.ProjectTo<CompanyDto>(_db.Companies).ToListAsync();
 
-        var companyDtos = includeEmployees ? _mapper.Map<IEnumerable<CompanyDto>>(await GetCompaniesAsync(true))
-                                           : _mapper.Map<IEnumerable<CompanyDto>>(await GetCompaniesAsync());
+        var companyDtos = includeEmployees ? _mapper.Map<IEnumerable<CompanyDto>>(await _companyRepository.GetCompaniesAsync(true))
+                                           : _mapper.Map<IEnumerable<CompanyDto>>(await _companyRepository.GetCompaniesAsync());
         return Ok(companyDtos);
     }
 
@@ -45,7 +45,7 @@ public class CompaniesController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<CompanyDto>> GetCompany(Guid id)
     {
-        var company = await GetCompanyAsync(id);
+        var company = await _companyRepository.GetCompanyAsync(id);
 
         if (company == null)
         {
@@ -64,7 +64,7 @@ public class CompaniesController : ControllerBase
     {
         if (id != dto.Id)  return BadRequest();
 
-        var existingCompany = await GetCompanyAsync(id);
+        var existingCompany = await _companyRepository.GetCompanyAsync(id);
 
         if(existingCompany is null) return NotFound();
 
@@ -89,7 +89,7 @@ public class CompaniesController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCompany(Guid id)
     {
-        var company = await GetCompanyAsync(id);
+        var company = await _companyRepository.GetCompanyAsync(id);
         if (company == null) return NotFound();
 
         _db.Companies.Remove(company);
