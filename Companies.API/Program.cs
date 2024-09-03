@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Companies.API.Extensions;
 using Companies.Infrastructure.Data;
 using Companies.Infrastructure.Repository;
+using Domain.Contracts;
 
 namespace Companies.API
 {

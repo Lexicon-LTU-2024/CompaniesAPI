@@ -1,6 +1,6 @@
 ﻿using Domain.Models.Entities;
 
-namespace Companies.Infrastructure.Repository;
+namespace Domain.Contracts;
 public interface ICompanyRepository
 {
     Task<IEnumerable<Company>> GetCompaniesAsync(bool includeEmployees = false);

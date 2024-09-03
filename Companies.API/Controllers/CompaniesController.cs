@@ -6,6 +6,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Companies.Infrastructure.Data;
 using Companies.Infrastructure.Repository;
+using Domain.Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.Query;
 
