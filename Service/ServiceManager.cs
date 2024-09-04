@@ -1,14 +1,15 @@
 ﻿using Domain.Contracts;
+using Service.Contracts;
 
 namespace Service;
 
-public class ServiceManager
+public class ServiceManager : IServiceManager
 {
-    private readonly Lazy<CompanyService> _companyService;
-    private readonly Lazy<EmployeeService> _employeeService;
+    private readonly Lazy<ICompanyService> _companyService;
+    private readonly Lazy<IEmployeeService> _employeeService;
 
-    public CompanyService CompanyService => _companyService.Value;
-    public EmployeeService EmployeeService => _employeeService.Value;
+    public ICompanyService CompanyService => _companyService.Value;
+    public IEmployeeService EmployeeService => _employeeService.Value;
 
     public ServiceManager(IUnitOfWork uow)
     {
@@ -17,7 +18,7 @@ public class ServiceManager
             throw new ArgumentNullException(nameof(uow));
         }
 
-        _companyService = new Lazy<CompanyService>(() => new CompanyService(uow));
-        _employeeService = new Lazy<EmployeeService>(() => new EmployeeService(uow));
+        _companyService = new Lazy<ICompanyService>(() => new CompanyService(uow));
+        _employeeService = new Lazy<IEmployeeService>(() => new EmployeeService(uow));
     }
 }
