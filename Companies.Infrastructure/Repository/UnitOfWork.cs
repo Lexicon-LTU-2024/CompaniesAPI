@@ -11,10 +11,12 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly DBContext _db;
 
-    public ICompanyRepository CompanyRepository { get; }
+    public ICompanyRepository Company { get; }
+    public IEmployeeRepository Employee { get; set; }
     public UnitOfWork(DBContext db)
     {
-        CompanyRepository = new CompanyRepository(db);
+        Company = new CompanyRepository(db);
+        Employee = new EmployeeRepository(db);
         _db = db;
     }
 

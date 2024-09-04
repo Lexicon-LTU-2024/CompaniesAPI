@@ -35,8 +35,8 @@ public class CompaniesController : ControllerBase
         //var dto2 = await _db.Companies.ProjectTo<CompanyDto>(_mapper.ConfigurationProvider).ToListAsync();
         //var dto3 = await _mapper.ProjectTo<CompanyDto>(_db.Companies).ToListAsync();
 
-        var companyDtos = includeEmployees ? _mapper.Map<IEnumerable<CompanyDto>>(await _uow.CompanyRepository.GetCompaniesAsync(trackChanges: false, includeEmployees: true))
-                                           : _mapper.Map<IEnumerable<CompanyDto>>(await _uow.CompanyRepository.GetCompaniesAsync(trackChanges: false));
+        var companyDtos = includeEmployees ? _mapper.Map<IEnumerable<CompanyDto>>(await _uow.Company.GetCompaniesAsync(trackChanges: false, includeEmployees: true))
+                                           : _mapper.Map<IEnumerable<CompanyDto>>(await _uow.Company.GetCompaniesAsync(trackChanges: false));
         return Ok(companyDtos);
     }
 
@@ -45,7 +45,7 @@ public class CompaniesController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<CompanyDto>> GetCompany(Guid id)
     {
-        var company = await _uow.CompanyRepository.GetCompanyAsync(id, trackChanges: false);
+        var company = await _uow.Company.GetCompanyAsync(id, trackChanges: false);
 
         if (company == null)
         {
@@ -64,7 +64,7 @@ public class CompaniesController : ControllerBase
     {
         if (id != dto.Id)  return BadRequest();
 
-        var existingCompany = await _uow.CompanyRepository.GetCompanyAsync(id, trackChanges: true);
+        var existingCompany = await _uow.Company.GetCompanyAsync(id, trackChanges: true);
 
         if(existingCompany is null) return NotFound();
 
@@ -78,7 +78,7 @@ public class CompaniesController : ControllerBase
     public async Task<ActionResult<Company>> PostCompany(CompanyCreateDto dto)
     {
         var company = _mapper.Map<Company>(dto);
-        await _uow.CompanyRepository.CreateAsync(company);
+        await _uow.Company.CreateAsync(company);
         await _uow.CompleteAsync();
 
         var createdCompanyDto = _mapper.Map<CompanyDto>(company);
@@ -89,10 +89,10 @@ public class CompaniesController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCompany(Guid id)
     {
-        var company = await _uow.CompanyRepository.GetCompanyAsync(id, trackChanges: false);
+        var company = await _uow.Company.GetCompanyAsync(id, trackChanges: false);
         if (company == null) return NotFound();
 
-        _uow.CompanyRepository.Delete(company);
+        _uow.Company.Delete(company);
         await _uow.CompleteAsync();
 
         return NoContent();

@@ -1,7 +1,8 @@
 ﻿namespace Domain.Contracts;
 public interface IUnitOfWork
 {
-    ICompanyRepository CompanyRepository { get; }
+    ICompanyRepository Company { get; }
+    IEmployeeRepository Employee { get; }
 
     Task CompleteAsync();
 }
