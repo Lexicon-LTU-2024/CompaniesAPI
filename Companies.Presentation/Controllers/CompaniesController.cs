@@ -1,16 +1,10 @@
-﻿using System;
+﻿using Companies.Shared.DTOs;
+using Microsoft.AspNetCore.Mvc;
+using Service;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using Companies.Infrastructure.Data;
-using Companies.Infrastructure.Repository;
-using Domain.Contracts;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore.Query;
-using Service;
-
 
 namespace Companies.API.Controllers;
 
