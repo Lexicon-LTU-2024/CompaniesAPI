@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Companies.Shared.DTOs;
 using Domain.Contracts;
+using Domain.Models.Exeptions;
 using Service.Contracts;
 using System;
 using System.Collections.Generic;
@@ -28,10 +29,7 @@ public class CompanyService : ICompanyService
     {
         var company = await _uow.Company.GetCompanyAsync(id, trackChanges: false);
 
-        if (company == null)
-        {
-            throw new NullReferenceException("Hej");
-        }
+        if (company == null) throw new CompanyNotFoundException(id);
 
         return _mapper.Map<CompanyDto>(company);
     }
