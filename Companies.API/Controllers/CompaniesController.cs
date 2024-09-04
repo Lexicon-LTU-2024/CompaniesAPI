@@ -32,24 +32,17 @@ public class CompaniesController : ControllerBase
         return Ok(companyDtos);
     }
 
-  
 
-    //[HttpGet("{id:guid}")]
-    //public async Task<ActionResult<CompanyDto>> GetCompany(Guid id)
-    //{
-    //    var company = await _uow.Company.GetCompanyAsync(id, trackChanges: false);
 
-    //    if (company == null)
-    //    {
-    //        return NotFound();
-    //    }
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<CompanyDto>> GetCompany(Guid id)
+    {
+        var dto = await _serviceManager.CompanyService.GetCompanyAsync(id);
 
-    //    var dto = _mapper.Map<CompanyDto>(company);
+        return Ok(dto);
+    }
 
-    //    return Ok(dto);
-    //}
 
-  
 
     //[HttpPut("{id}")]
     //public async Task<IActionResult> PutCompany(Guid id, CompanyUpdateDto dto)

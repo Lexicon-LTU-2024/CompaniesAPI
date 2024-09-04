@@ -23,5 +23,16 @@ public class CompanyService : ICompanyService
     public async Task<IEnumerable<CompanyDto>> GetCompaniesAsync(bool includeEmployees, bool trackChanges = false) =>
          includeEmployees ? _mapper.Map<IEnumerable<CompanyDto>>(await _uow.Company.GetCompaniesAsync(trackChanges, includeEmployees))
                           : _mapper.Map<IEnumerable<CompanyDto>>(await _uow.Company.GetCompaniesAsync(trackChanges));
-    
+
+    public async Task<CompanyDto> GetCompanyAsync(Guid id, bool trackChanges = false)
+    {
+        var company = await _uow.Company.GetCompanyAsync(id, trackChanges: false);
+
+        if (company == null)
+        {
+            //ToDo:  fix later
+        }
+
+        return _mapper.Map<CompanyDto>(company);
+    }
 }
