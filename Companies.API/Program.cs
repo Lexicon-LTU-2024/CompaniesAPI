@@ -4,6 +4,7 @@ using Companies.API.Extensions;
 using Companies.Infrastructure.Data;
 using Companies.Infrastructure.Repository;
 using Domain.Contracts;
+using Service;
 
 namespace Companies.API
 {
@@ -23,6 +24,7 @@ namespace Companies.API
             builder.Services.ConfigureCors();
             builder.Services.ConfigureOpenApi();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IServiceManager, ServiceManager>();
 
             var app = builder.Build();
 

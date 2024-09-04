@@ -9,6 +9,7 @@ using Companies.Infrastructure.Repository;
 using Domain.Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.Query;
+using Service;
 
 
 namespace Companies.API.Controllers;
@@ -17,14 +18,11 @@ namespace Companies.API.Controllers;
 [ApiController]
 public class CompaniesController : ControllerBase
 {
-    private readonly IMapper _mapper;
-    private readonly IUnitOfWork _uow;
+    private readonly IServiceManager _serviceManager;
 
-    public CompaniesController(IMapper mapper, IUnitOfWork uow )
+    public CompaniesController(IServiceManager serviceManager)
     {
-       
-        _mapper = mapper;
-        _uow = uow;
+        _serviceManager = serviceManager;
     }
 
     [HttpGet]
@@ -42,59 +40,59 @@ public class CompaniesController : ControllerBase
 
   
 
-    [HttpGet("{id:guid}")]
-    public async Task<ActionResult<CompanyDto>> GetCompany(Guid id)
-    {
-        var company = await _uow.Company.GetCompanyAsync(id, trackChanges: false);
+    //[HttpGet("{id:guid}")]
+    //public async Task<ActionResult<CompanyDto>> GetCompany(Guid id)
+    //{
+    //    var company = await _uow.Company.GetCompanyAsync(id, trackChanges: false);
 
-        if (company == null)
-        {
-            return NotFound();
-        }
+    //    if (company == null)
+    //    {
+    //        return NotFound();
+    //    }
 
-        var dto = _mapper.Map<CompanyDto>(company);
+    //    var dto = _mapper.Map<CompanyDto>(company);
 
-        return Ok(dto);
-    }
+    //    return Ok(dto);
+    //}
 
   
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutCompany(Guid id, CompanyUpdateDto dto)
-    {
-        if (id != dto.Id)  return BadRequest();
+    //[HttpPut("{id}")]
+    //public async Task<IActionResult> PutCompany(Guid id, CompanyUpdateDto dto)
+    //{
+    //    if (id != dto.Id)  return BadRequest();
 
-        var existingCompany = await _uow.Company.GetCompanyAsync(id, trackChanges: true);
+    //    var existingCompany = await _uow.Company.GetCompanyAsync(id, trackChanges: true);
 
-        if(existingCompany is null) return NotFound();
+    //    if(existingCompany is null) return NotFound();
 
-        _mapper.Map(dto, existingCompany);
-        await _uow.CompleteAsync();
+    //    _mapper.Map(dto, existingCompany);
+    //    await _uow.CompleteAsync();
 
-        return Ok(_mapper.Map<CompanyDto>(existingCompany)); //For demo!
-    }
+    //    return Ok(_mapper.Map<CompanyDto>(existingCompany)); //For demo!
+    //}
 
-    [HttpPost]
-    public async Task<ActionResult<Company>> PostCompany(CompanyCreateDto dto)
-    {
-        var company = _mapper.Map<Company>(dto);
-        await _uow.Company.CreateAsync(company);
-        await _uow.CompleteAsync();
+    //[HttpPost]
+    //public async Task<ActionResult<Company>> PostCompany(CompanyCreateDto dto)
+    //{
+    //    var company = _mapper.Map<Company>(dto);
+    //    await _uow.Company.CreateAsync(company);
+    //    await _uow.CompleteAsync();
 
-        var createdCompanyDto = _mapper.Map<CompanyDto>(company);
+    //    var createdCompanyDto = _mapper.Map<CompanyDto>(company);
 
-        return CreatedAtAction(nameof(GetCompany), new { id = createdCompanyDto.Id }, createdCompanyDto);
-    }
+    //    return CreatedAtAction(nameof(GetCompany), new { id = createdCompanyDto.Id }, createdCompanyDto);
+    //}
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteCompany(Guid id)
-    {
-        var company = await _uow.Company.GetCompanyAsync(id, trackChanges: false);
-        if (company == null) return NotFound();
+    //[HttpDelete("{id}")]
+    //public async Task<IActionResult> DeleteCompany(Guid id)
+    //{
+    //    var company = await _uow.Company.GetCompanyAsync(id, trackChanges: false);
+    //    if (company == null) return NotFound();
 
-        _uow.Company.Delete(company);
-        await _uow.CompleteAsync();
+    //    _uow.Company.Delete(company);
+    //    await _uow.CompleteAsync();
 
-        return NoContent();
-    }
+    //    return NoContent();
+    //}
 }
