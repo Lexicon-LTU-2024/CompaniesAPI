@@ -30,7 +30,7 @@ public class CompanyService : ICompanyService
 
         if (company == null)
         {
-            //ToDo:  fix later
+            throw new NullReferenceException("Hej");
         }
 
         return _mapper.Map<CompanyDto>(company);

@@ -30,6 +30,8 @@ namespace Companies.API
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
+            app.ConfigureExceptionHandler();
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
