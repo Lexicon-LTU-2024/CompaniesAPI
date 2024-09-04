@@ -5,6 +5,7 @@ using Companies.Infrastructure.Data;
 using Companies.Infrastructure.Repository;
 using Domain.Contracts;
 using Service;
+using Companies.Presentation;
 
 namespace Companies.API
 {
@@ -17,8 +18,8 @@ namespace Companies.API
             // Add services to the container.
             builder.Services.ConfigureSql(builder.Configuration);
             builder.Services.AddControllers(configure => configure.ReturnHttpNotAcceptable = true)
-                           // .AddXmlDataContractSerializerFormatters()
-                            .AddNewtonsoftJson();
+                            .AddNewtonsoftJson()
+                            .AddApplicationPart(typeof(AssemblyReference).Assembly);
 
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
             builder.Services.ConfigureCors();

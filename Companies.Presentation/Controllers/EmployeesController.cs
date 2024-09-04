@@ -4,14 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
-using AutoMapper;
-using Azure;
-using Microsoft.AspNetCore.JsonPatch;
-using Companies.Infrastructure.Data;
-using Domain.Contracts;
-using Companies.Infrastructure.Repository;
+using Service;
+using Companies.Shared.DTOs;
 
 namespace Companies.API.Controllers
 {
@@ -19,71 +14,61 @@ namespace Companies.API.Controllers
     [ApiController]
     public class EmployeesController : ControllerBase
     {
-        private readonly IUnitOfWork _uow;
-        private readonly IMapper _mapper;
+        private readonly IServiceManager _serviceMangar;
 
-        public EmployeesController(IUnitOfWork uow, IMapper mapper)
+        public EmployeesController(IServiceManager serviceMangar)
         {
-            _uow = uow;
-            this._mapper = mapper;
+            _serviceMangar = serviceMangar;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetEmployee(Guid companyId)
         {
-
-            var companyExists = await _uow.Company.GetCompanyAsync(companyId, false);
-
-            if (companyExists is null) return NotFound();
-
-            var employees = await _uow.Employee.GetEmployeesAsync(companyId, false);
-
-            var employeeDtos = _mapper.Map<IEnumerable<EmployeeDto>>(employees);
-
+            IEnumerable<EmployeeDto> employeeDtos = await _serviceMangar.EmployeeService.GetEmployeesAsync(companyId);
             return Ok(employeeDtos);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEmployee(Guid companyId, Guid id)
-        {
-            var companyExists = await _uow.Company.GetCompanyAsync(companyId, false);
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteEmployee(Guid companyId, Guid id)
+        //{
+        //    var companyExists = await _uow.Company.GetCompanyAsync(companyId, false);
 
 
-            if (companyExists is null) return new NotFoundObjectResult("Company not found");
+        //    if (companyExists is null) return new NotFoundObjectResult("Company not found");
 
-            var employee = await _uow.Employee.GetEmployeeAsync(companyId, id, false);
-            if (employee == null) return NotFound();
+        //    var employee = await _uow.Employee.GetEmployeeAsync(companyId, id, false);
+        //    if (employee == null) return NotFound();
 
-            _uow.Employee.Delete(employee);
-            await _uow.CompleteAsync();
+        //    _uow.Employee.Delete(employee);
+        //    await _uow.CompleteAsync();
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
-        [HttpPatch("{id:guid}")]
-        public async Task<ActionResult> PatchEmployee(Guid companyId, Guid id, JsonPatchDocument<EmployeeUpdateDto> patchDocument)
-        {
-            if(patchDocument is null) return BadRequest("No patch doc");
+        //[HttpPatch("{id:guid}")]
+        //public async Task<ActionResult> PatchEmployee(Guid companyId, Guid id, JsonPatchDocument<EmployeeUpdateDto> patchDocument)
+        //{
+        //    if(patchDocument is null) return BadRequest("No patch doc");
 
-            //var companyExists = await _db.Companies.AnyAsync(c => c.Id == companyId);
+        //    //var companyExists = await _db.Companies.AnyAsync(c => c.Id == companyId);
 
-            //if(!companyExists) return NotFound();
+        //    //if(!companyExists) return NotFound();
 
-            var employeeToPatch = await _uow.Employee.GetEmployeeAsync(companyId, id, true);
-            if (employeeToPatch is null) return NotFound();
+        //    var employeeToPatch = await _uow.Employee.GetEmployeeAsync(companyId, id, true);
+        //    if (employeeToPatch is null) return NotFound();
 
 
-            var dto = _mapper.Map<EmployeeUpdateDto>(employeeToPatch);
+        //    var dto = _mapper.Map<EmployeeUpdateDto>(employeeToPatch);
 
-            patchDocument.ApplyTo(dto, ModelState);
-            TryValidateModel(dto);
+        //    patchDocument.ApplyTo(dto, ModelState);
+        //    TryValidateModel(dto);
 
-            if (!ModelState.IsValid) return UnprocessableEntity(ModelState);
+        //    if (!ModelState.IsValid) return UnprocessableEntity(ModelState);
 
-            _mapper.Map(dto, employeeToPatch);
-            await _uow.CompleteAsync();
+        //    _mapper.Map(dto, employeeToPatch);
+        //    await _uow.CompleteAsync();
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
     }
 }
