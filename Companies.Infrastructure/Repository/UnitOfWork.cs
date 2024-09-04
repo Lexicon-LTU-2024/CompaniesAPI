@@ -10,14 +10,17 @@ namespace Companies.Infrastructure.Repository;
 public class UnitOfWork : IUnitOfWork
 {
     private readonly DBContext _db;
+    private readonly Lazy<ICompanyRepository> _companyRepository;
+    private readonly Lazy<IEmployeeRepository> _employeeRepository;
 
-    public ICompanyRepository Company { get; }
-    public IEmployeeRepository Employee { get; set; }
+    public ICompanyRepository Company => _companyRepository.Value;
+    public IEmployeeRepository Employee => _employeeRepository.Value;
+
     public UnitOfWork(DBContext db)
     {
-        Company = new CompanyRepository(db);
-        Employee = new EmployeeRepository(db);
-        _db = db;
+        _db = db ?? throw new ArgumentNullException(nameof(db));
+        _companyRepository = new Lazy<ICompanyRepository>(() => new CompanyRepository(db));
+        _employeeRepository = new Lazy<IEmployeeRepository>(() => new EmployeeRepository(db));
     }
 
     public async Task CompleteAsync()
