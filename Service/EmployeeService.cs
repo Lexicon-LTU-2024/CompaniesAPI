@@ -1,4 +1,5 @@
-﻿using Domain.Contracts;
+﻿using AutoMapper;
+using Domain.Contracts;
 using Service.Contracts;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,11 @@ namespace Service;
 public class EmployeeService : IEmployeeService
 {
     private readonly IUnitOfWork uow;
+    private readonly IMapper _mapper;
 
-    public EmployeeService(IUnitOfWork uow)
+    public EmployeeService(IUnitOfWork uow, IMapper mapper)
     {
         this.uow = uow;
+        _mapper = mapper;
     }
 }
