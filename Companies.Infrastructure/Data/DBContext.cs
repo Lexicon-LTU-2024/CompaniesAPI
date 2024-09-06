@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Companies.Infrastructure.Data
 {
-    public class DBContext : IdentityDbContext<Employee, IdentityRole, string>
+    public class DBContext : IdentityDbContext<ApplicationUser, IdentityRole, string>
     {
         public DBContext(DbContextOptions<DBContext> options)
             : base(options)

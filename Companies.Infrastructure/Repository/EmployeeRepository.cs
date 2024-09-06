@@ -9,19 +9,19 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Companies.Infrastructure.Repository;
-public class EmployeeRepository : RepositoryBase<Employee>, IEmployeeRepository
+public class EmployeeRepository : RepositoryBase<ApplicationUser>, IEmployeeRepository
 {
     public EmployeeRepository(DBContext db) :base(db)
     {
     }
 
-    public async Task<Employee?> GetEmployeeAsync(Guid companyId, Guid id, bool trackChanges)
+    public async Task<ApplicationUser?> GetEmployeeAsync(Guid companyId, Guid id, bool trackChanges)
     {
         return await FindByCondition(e => e.CompanyId.Equals(companyId) && e.Id.Equals(id), trackChanges)
                                     .FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<Employee>> GetEmployeesAsync(Guid companyId, bool trackChanges)
+    public async Task<IEnumerable<ApplicationUser>> GetEmployeesAsync(Guid companyId, bool trackChanges)
     {
         return await FindByCondition(e => e.CompanyId.Equals(companyId), trackChanges)
                                     .ToListAsync();

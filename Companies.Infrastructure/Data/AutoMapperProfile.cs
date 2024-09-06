@@ -15,8 +15,8 @@ namespace Companies.Infrastructure.Data
             CreateMap<CompanyCreateDto, Company>();
             CreateMap<CompanyUpdateDto, Company>();
 
-            CreateMap<Employee, EmployeeDto>().ReverseMap();
-            CreateMap<EmployeeUpdateDto, Employee>().ReverseMap();
+            CreateMap<ApplicationUser, EmployeeDto>().ReverseMap();
+            CreateMap<EmployeeUpdateDto, ApplicationUser>().ReverseMap();
         }
     }
 }

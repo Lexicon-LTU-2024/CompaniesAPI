@@ -31,7 +31,7 @@ namespace Companies.API
             builder.Services.ConfigureRepositories();
 
             builder.Services.AddAuthentication();
-            builder.Services.AddIdentityCore<Employee>(opt =>
+            builder.Services.AddIdentityCore<ApplicationUser>(opt =>
             {
                 opt.Password.RequireDigit = false;
                 opt.Password.RequireLowercase = false;
