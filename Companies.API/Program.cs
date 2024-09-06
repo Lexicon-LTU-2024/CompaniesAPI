@@ -7,6 +7,9 @@ using Domain.Contracts;
 using Service;
 using Companies.Presentation;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Companies.API
 {
@@ -30,7 +33,33 @@ namespace Companies.API
             builder.Services.ConfigureServices();
             builder.Services.ConfigureRepositories();
 
-            builder.Services.AddAuthentication();
+            var secretkey = builder.Configuration["secretkey"];
+            ArgumentNullException.ThrowIfNull(secretkey, nameof(secretkey));
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+                {
+                    var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+                    ArgumentNullException.ThrowIfNull(jwtSettings, nameof(jwtSettings));
+
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = jwtSettings["Issuer"],
+                        ValidAudience = jwtSettings["Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretkey))
+                    };
+
+                });
+
+
             builder.Services.AddIdentityCore<ApplicationUser>(opt =>
             {
                 opt.Password.RequireDigit = false;
