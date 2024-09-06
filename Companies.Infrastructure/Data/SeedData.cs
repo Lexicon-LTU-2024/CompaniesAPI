@@ -3,6 +3,7 @@ using Domain.Models.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Companies.Infrastructure.Data
@@ -11,6 +12,7 @@ namespace Companies.Infrastructure.Data
     {
         private static UserManager<ApplicationUser> userManager = null!;
         private static RoleManager<IdentityRole> roleManager = null!;
+        private static IConfiguration configuration = null!;
         private const string employeeRole = "Employee";
         private const string adminRole = "Admin";
 
@@ -25,6 +27,7 @@ namespace Companies.Infrastructure.Data
 
                 userManager = servicesProvider.GetRequiredService<UserManager<ApplicationUser>>();
                 roleManager = servicesProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                configuration = servicesProvider.GetRequiredService<IConfiguration>();
 
                 //Null check on services!
                 //await db.Database.MigrateAsync();
@@ -88,9 +91,13 @@ namespace Companies.Infrastructure.Data
 
             var users =  faker.Generate(nrOfEmplyees);
 
+            var passWord = configuration["password"];
+            if (string.IsNullOrEmpty(passWord))
+                throw new Exception("password not exist in config");
+
             foreach (var user in users)
             {
-                var result = await userManager.CreateAsync(user, "password");
+                var result = await userManager.CreateAsync(user, passWord);
                 if (!result.Succeeded) throw new Exception(string.Join("\n", result.Errors));
 
                 if (user.Position == "Manager")
