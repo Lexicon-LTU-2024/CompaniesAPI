@@ -12,14 +12,9 @@ public class ServiceManager : IServiceManager
     public ICompanyService CompanyService => _companyService.Value;
     public IEmployeeService EmployeeService => _employeeService.Value;
 
-    public ServiceManager(IUnitOfWork uow, IMapper mapper)
+    public ServiceManager(Lazy<ICompanyService> companyService, Lazy<IEmployeeService> employeeService )
     {
-        if (uow is null)
-        {
-            throw new ArgumentNullException(nameof(uow));
-        }
-
-        _companyService = new Lazy<ICompanyService>(() => new CompanyService(uow, mapper));
-        _employeeService = new Lazy<IEmployeeService>(() => new EmployeeService(uow, mapper));
+        _companyService = companyService;
+        _employeeService = employeeService;
     }
 }

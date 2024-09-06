@@ -16,11 +16,11 @@ public class UnitOfWork : IUnitOfWork
     public ICompanyRepository Company => _companyRepository.Value;
     public IEmployeeRepository Employee => _employeeRepository.Value;
 
-    public UnitOfWork(DBContext db)
+    public UnitOfWork(DBContext db, Lazy<ICompanyRepository> companyRepository, Lazy<IEmployeeRepository> employeeRepo)
     {
         _db = db ?? throw new ArgumentNullException(nameof(db));
-        _companyRepository = new Lazy<ICompanyRepository>(() => new CompanyRepository(db));
-        _employeeRepository = new Lazy<IEmployeeRepository>(() => new EmployeeRepository(db));
+        _companyRepository = companyRepository;
+        _employeeRepository = employeeRepo;
     }
 
     public async Task CompleteAsync()
