@@ -139,5 +139,50 @@ public class AuthService : IAuthService
           return user != null && await userManager.CheckPasswordAsync(user, userDto.Password!);
 
     }
+
+    public async Task<TokenDto> RefreshTokenAsync(TokenDto token)
+    {
+        ClaimsPrincipal principal = GetPrincipalFromExpiredToken(token.AccessToken);
+
+        ApplicationUser? user = await userManager.FindByNameAsync(principal.Identity?.Name!);
+        if (user == null || user.RefreshToken != token.RefreshToken || user.RefreshTokenExpireTime <= DateTime.Now)
+
+            //ToDo: Handle with middleware and custom exception class
+            throw new ArgumentException("The TokenDto has som invalid values");
+
+        this.user = user;
+
+        return await CreateTokenAsync(expireTime: false);
+    }
+
+    private ClaimsPrincipal GetPrincipalFromExpiredToken(string accessToken)
+    {
+        var jwtSettings = configuration.GetSection("JwtSettings");
+
+        var secretKey = configuration["secretkey"];
+        ArgumentNullException.ThrowIfNull(nameof(secretKey));
+
+        var tokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings["Issuer"],
+            ValidAudience = jwtSettings["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!))
+        };
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+
+        ClaimsPrincipal principal = tokenHandler.ValidateToken(accessToken, tokenValidationParameters, out SecurityToken securityToken);
+
+        if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+        {
+            throw new SecurityTokenException("Invalid token");
+        }
+
+        return principal;
+    }
 }
 
