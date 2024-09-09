@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,13 +32,31 @@ public class AuthService : IAuthService
         this.configuration = configuration;
     }
 
-    public async Task<string> CreateTokenAsync()
+    public async Task<TokenDto> CreateTokenAsync(bool expireTime)
     {
         SigningCredentials signing = GetSigningCredentials();
         IEnumerable<Claim> claims = await GetClaimsAsync();
         JwtSecurityToken tokenOptions = GenerateTokenOptions(signing, claims);
 
-        return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+        ArgumentNullException.ThrowIfNull(user, nameof(user));
+
+        user.RefreshToken = GenerateRefreshToken();
+
+        if (expireTime)
+            user.RefreshTokenExpireTime = DateTime.UtcNow.AddDays(2);
+
+        var res = await userManager.UpdateAsync(user); //ToDo validate res!
+        var accessToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+
+        return new TokenDto(accessToken, user.RefreshToken);
+    }
+
+    private string GenerateRefreshToken()
+    {
+        var randomNumber = new byte[32];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomNumber);
+        return Convert.ToBase64String(randomNumber);
     }
 
     private JwtSecurityToken GenerateTokenOptions(SigningCredentials signing, IEnumerable<Claim> claims)
