@@ -10,6 +10,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using System.Security.Claims;
 
 namespace Companies.API
 {
@@ -21,7 +24,18 @@ namespace Companies.API
 
             // Add services to the container.
             builder.Services.ConfigureSql(builder.Configuration);
-            builder.Services.AddControllers(configure => configure.ReturnHttpNotAcceptable = true)
+            builder.Services.AddControllers(configure =>
+            {
+                configure.ReturnHttpNotAcceptable = true;
+
+                //var policy = new AuthorizationPolicyBuilder()
+                //                    .RequireAuthenticatedUser()
+                //                    .RequireRole("Employee")
+                //                    .Build();
+
+                //configure.Filters.Add(new AuthorizeFilter(policy));
+
+            })
                             .AddNewtonsoftJson()
                             .AddApplicationPart(typeof(AssemblyReference).Assembly);
 
@@ -72,6 +86,18 @@ namespace Companies.API
                .AddRoles<IdentityRole>()
                .AddEntityFrameworkStores<DBContext>()
                .AddDefaultTokenProviders();
+
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminPolicy", policy =>
+                    policy.RequireRole("Admin")
+                          .RequireClaim(ClaimTypes.NameIdentifier)
+                          .RequireClaim(ClaimTypes.Role));
+
+                options.AddPolicy("EmployeePolicy", policy =>
+                    policy.RequireRole("Employee"));
+            });
 
 
 

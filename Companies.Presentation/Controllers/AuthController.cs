@@ -1,4 +1,5 @@
 ﻿using Companies.Shared.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service;
@@ -29,6 +30,7 @@ namespace Companies.Presentation.Controllers
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Authenticate(UserForAuthDto user)
         {
             if (!await _serviceManager.AuthService.ValidateUserAsync(user))

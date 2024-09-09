@@ -25,7 +25,7 @@ public class CompaniesController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = "Employee")]
+    [Authorize(Policy = "EmployeePolicy")]
     public async Task<ActionResult<IEnumerable<CompanyDto>>> GetCompany(bool includeEmployees)
     {
         //var auth = User.Identity.IsAuthenticated;
