@@ -23,5 +23,8 @@ namespace Domain.Models.Entities
         //Navigation Property
         public Company? Company { get; set; }
 
+        public string? RefreshToken { get; set; }
+        public DateTime RefreshTokenExpireTime { get; set; }
+
     }
 }
