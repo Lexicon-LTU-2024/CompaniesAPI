@@ -10,6 +10,8 @@ namespace Service.Contracts
 {
     public interface IAuthService
     {
+        Task<string> CreateTokenAsync();
         Task<IdentityResult> RegisterUserAsync(UserForRegistrationDto userForRegistration);
+        Task<bool> ValidateUserAsync(UserForAuthDto user);
     }
 }

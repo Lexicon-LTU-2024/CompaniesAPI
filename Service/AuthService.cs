@@ -27,6 +27,11 @@ public class AuthService : IAuthService
         this.configuration = configuration;
     }
 
+    public async Task<string> CreateTokenAsync()
+    {
+       
+    }
+
     public async Task<IdentityResult> RegisterUserAsync(UserForRegistrationDto userForRegistration)
     {
         ArgumentNullException.ThrowIfNull(userForRegistration, nameof(userForRegistration));
@@ -39,6 +44,7 @@ public class AuthService : IAuthService
 
         var user = mapper.Map<ApplicationUser>(userForRegistration);
 
+        //ToDo: Check if company exists!!!!
         var result = await userManager.CreateAsync(user, userForRegistration.Password!);
 
         if (result.Succeeded)
@@ -47,6 +53,16 @@ public class AuthService : IAuthService
         }
 
         return result;
+    }
+
+    public async Task<bool> ValidateUserAsync(UserForAuthDto userDto)
+    {
+          ArgumentNullException.ThrowIfNull(userDto, nameof(userDto));
+
+          var user = await userManager.FindByNameAsync(userDto.UserName!);
+
+          return user != null && await userManager.CheckPasswordAsync(user, userDto.Password!);
+
     }
 }
 
