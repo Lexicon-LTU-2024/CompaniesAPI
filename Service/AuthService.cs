@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Companies.Shared.DTOs;
+using Domain.Models.Configuration;
 using Domain.Models.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -17,15 +18,16 @@ using System.Threading.Tasks;
 namespace Service;
 public class AuthService : IAuthService
 {
-
+    private readonly IJwtConfiguration jwtConfiguration;
     private readonly IMapper mapper;
     private readonly UserManager<ApplicationUser> userManager;
     private readonly RoleManager<IdentityRole> roleManager;
     private readonly IConfiguration configuration;
     private ApplicationUser? user;
 
-    public AuthService(IMapper mapper, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+    public AuthService(IJwtConfiguration jwtConfiguration, IMapper mapper, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
     {
+        this.jwtConfiguration = jwtConfiguration;
         this.mapper = mapper;
         this.userManager = userManager;
         this.roleManager = roleManager;
@@ -64,8 +66,8 @@ public class AuthService : IAuthService
          var jwtSettings = configuration.GetSection("JwtSettings");
 
         var tokenOptions = new JwtSecurityToken(
-                                    issuer: jwtSettings["Issuer"],
-                                    audience: jwtSettings["Audience"],
+                                    issuer: jwtConfiguration.Issuer,
+                                    audience: jwtConfiguration.Audience,
                                     claims: claims,
                                     expires: DateTime.Now.AddMinutes(Convert.ToDouble(jwtSettings["Expires"])),
                                     signingCredentials: signing);

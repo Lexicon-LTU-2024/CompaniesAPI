@@ -3,6 +3,10 @@ using Companies.Infrastructure.Repository;
 using Domain.Contracts;
 using Service.Contracts;
 using Service;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Domain.Models.Configuration;
 
 namespace Companies.API.Extensions;
 
@@ -50,6 +54,40 @@ public static class ServiceExtensions
         services.AddScoped(provider => new Lazy<ICompanyRepository>(() => provider.GetRequiredService<ICompanyRepository>()));
         services.AddScoped(provider => new Lazy<IEmployeeRepository>(() => provider.GetRequiredService<IEmployeeRepository>()));
 
+    }
+
+    public static void ConfigureJwt(this IServiceCollection services, IConfiguration configuration)
+    {
+        var secretkey = configuration["secretkey"];
+        ArgumentNullException.ThrowIfNull(secretkey, nameof(secretkey));
+
+        var jwtConfiguration = new JwtConfiguration();
+        configuration.Bind(JwtConfiguration.Section, jwtConfiguration);
+
+        services.AddSingleton<IJwtConfiguration>(jwtConfiguration);
+
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            //var jwtSettings = configuration.GetSection("JwtSettings");
+            //ArgumentNullException.ThrowIfNull(jwtSettings, nameof(jwtSettings));
+
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtConfiguration.Issuer,
+                ValidAudience = jwtConfiguration.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretkey))
+            };
+
+        });
     }
 
 
