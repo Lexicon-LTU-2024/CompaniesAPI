@@ -1,5 +1,7 @@
 ﻿using Companies.Shared.DTOs;
+using Domain.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Service;
 using System;
@@ -14,17 +16,22 @@ namespace Companies.API.Controllers;
 public class CompaniesController : ControllerBase
 {
     private readonly IServiceManager _serviceManager;
+    private readonly UserManager<ApplicationUser> userManager;
 
-    public CompaniesController(IServiceManager serviceManager)
+    public CompaniesController(IServiceManager serviceManager, UserManager<ApplicationUser> userManager)
     {
         _serviceManager = serviceManager;
+        this.userManager = userManager;
     }
 
     [HttpGet]
     [Authorize(Roles = "Employee")]
     public async Task<ActionResult<IEnumerable<CompanyDto>>> GetCompany(bool includeEmployees)
     {
-        var auth = User.Identity.IsAuthenticated;
+        //var auth = User.Identity.IsAuthenticated;
+
+        //var userName = userManager.GetUserName(User);
+        //var user = await userManager.GetUserAsync(User);
 
         var companyDtos = await _serviceManager.CompanyService.GetCompaniesAsync(includeEmployees);
         return Ok(companyDtos);
