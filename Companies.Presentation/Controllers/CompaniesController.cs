@@ -21,8 +21,11 @@ public class CompaniesController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "Employee")]
     public async Task<ActionResult<IEnumerable<CompanyDto>>> GetCompany(bool includeEmployees)
     {
+        var auth = User.Identity.IsAuthenticated;
+
         var companyDtos = await _serviceManager.CompanyService.GetCompaniesAsync(includeEmployees);
         return Ok(companyDtos);
     }
@@ -30,7 +33,7 @@ public class CompaniesController : ControllerBase
 
 
     [HttpGet("{id:guid}")]
-    [Authorize(Roles ="Admin")]
+    [AllowAnonymous]
     public async Task<ActionResult<CompanyDto>> GetCompany(Guid id)
     {
         var dto = await _serviceManager.CompanyService.GetCompanyAsync(id);
