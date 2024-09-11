@@ -1,4 +1,5 @@
 using Companies.Presentation.TestControllersOnlyForDemo;
+using Controller.Tests.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -13,6 +14,7 @@ public class SimpleControllerTests
     public async Task GetCompany_ShouldReturn400BadREquest()
     {
         var sut = new SimpleController();
+        sut.SetUserIsAuthenticated(false);
 
         var result = await sut.GetCompany();
         var resultType = result.Result as BadRequestObjectResult;
@@ -25,17 +27,8 @@ public class SimpleControllerTests
     public async Task GetComapany_IfNotAuthenticated_ShouldReturn400BadRequest()
     {
         //Arrange
-        var httpContext = new Mock<HttpContext>();
-        httpContext.SetupGet(x => x.User.Identity.IsAuthenticated).Returns(false);
-        // var httpContext = Mock.Of<HttpContext>(x => x.User.Identity.IsAuthenticated == false);
-
-        var controllerContext = new ControllerContext
-        {
-            HttpContext = httpContext.Object
-        };
-
         var sut = new SimpleController();
-        sut.ControllerContext = controllerContext;
+        sut.SetUserIsAuthenticated(false);
 
         //Act
         var res = await sut.GetCompany(false);
