@@ -1,5 +1,8 @@
-﻿using Companies.Shared.DTOs;
+﻿using AutoMapper;
+using Companies.Infrastructure.Data;
+using Companies.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +15,13 @@ namespace Companies.Presentation.TestControllersOnlyForDemo;
 [ApiController]
 public class SimpleController : ControllerBase
 {
-   
-    public SimpleController()
+    private readonly DBContext db;
+    private readonly IMapper mapper;
+
+    public SimpleController(DBContext db, IMapper mapper)
     {
-      
+        this.db = db;
+        this.mapper = mapper;
     }
 
     [HttpGet]
@@ -31,8 +37,14 @@ public class SimpleController : ControllerBase
         }
       //  return Ok();
      
+    } 
+    
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<CompanyDto>>> GetCompany2()
+    {
+        var companies = await db.Companies.ToListAsync();
+        var compDtos = mapper.Map<IEnumerable<CompanyDto>>(companies);  
+        return Ok(compDtos);
+     
     }
-
-
-
 }
