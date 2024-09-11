@@ -21,7 +21,7 @@ public class SimpleController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CompanyDto>>> GetCompany(bool includeEmployees = false)
     {
-        if (User.Identity.IsAuthenticated)
+        if (User?.Identity?.IsAuthenticated ?? false)
         {
             return Ok("is auth");
         }
