@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Domain.Models.Configuration;
+using Microsoft.OpenApi.Models;
 
 namespace Companies.API.Extensions;
 
@@ -31,8 +32,34 @@ public static class ServiceExtensions
     }
 
 
-    public static void ConfigureOpenApi(this IServiceCollection services) => services.AddEndpointsApiExplorer()
-                                                                                     .AddSwaggerGen();
+    public static void ConfigureOpenApi(this IServiceCollection services) => 
+        services.AddEndpointsApiExplorer()
+                .AddSwaggerGen(setup =>
+                {
+                    setup.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                    {
+                        In = ParameterLocation.Header,
+                        Description = "Place to add JWT with Bearer",
+                        Name = "Authorization",
+                        Type = SecuritySchemeType.ApiKey,
+                        Scheme = "Bearer"
+                    });
+
+                    setup.AddSecurityRequirement(new OpenApiSecurityRequirement
+                    {
+                        {
+                            new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Id = "Bearer",
+                                    Type = ReferenceType.SecurityScheme
+                                }
+                            },
+                            new List<string>()
+                        }
+                    });
+                });
 
 
     public static void ConfigureServices(this IServiceCollection services)
