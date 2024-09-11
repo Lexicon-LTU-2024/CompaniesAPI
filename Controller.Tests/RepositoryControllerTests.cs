@@ -31,14 +31,11 @@ public class RepositoryControllerTests
 
         //Act
         var result = await sut.GetCompany(false);
-        var resultType = result.Result as OkObjectResult;
 
         //Assert
-        Assert.IsType<OkObjectResult>(resultType);
-        Assert.Equal(StatusCodes.Status200OK, resultType.StatusCode);
-        var items = resultType.Value as List<Company>;
-        Assert.IsType<List<Company>>(items);
-        Assert.Equal(items.Count(), companies.Count);
+        var okObjectResult = Assert.IsType<OkObjectResult>(result.Result);
+        var items = Assert.IsType<List<Company>>(okObjectResult.Value);
+        Assert.Equal(items.Count, companies.Count);
     }
 
     private List<Company> GetCompanys()
