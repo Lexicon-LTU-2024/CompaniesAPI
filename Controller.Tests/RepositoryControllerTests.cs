@@ -20,6 +20,7 @@ public class RepositoryControllerTests
 {
     private Mock<ICompanyRepository> mockRepo;
     private RepositoryController sut;
+    private Mock<UserManager<ApplicationUser>> userManager;
 
     public RepositoryControllerTests()
     {
@@ -31,8 +32,7 @@ public class RepositoryControllerTests
         }));
 
         var mockUserStore = new Mock<IUserStore<ApplicationUser>>();
-        var userManager = new Mock<UserManager<ApplicationUser>>(mockUserStore.Object, null, null, null, null, null, null, null, null);
-        userManager.Setup(x => x.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(new ApplicationUser());
+        userManager = new Mock<UserManager<ApplicationUser>>(mockUserStore.Object, null, null, null, null, null, null, null, null);
 
         sut = new RepositoryController(mockRepo.Object, mapper, userManager.Object);
     }
@@ -43,6 +43,7 @@ public class RepositoryControllerTests
         //Arrange
         var companies = GetCompanys();
         mockRepo.Setup(m => m.GetCompaniesAsync(false, It.IsAny<bool>())).ReturnsAsync(companies);
+        userManager.Setup(x => x.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(new ApplicationUser());
 
         //Act
         var result = await sut.GetCompany(false);
@@ -51,6 +52,16 @@ public class RepositoryControllerTests
         var okObjectResult = Assert.IsType<OkObjectResult>(result.Result);
         var items = Assert.IsType<List<CompanyDto>>(okObjectResult.Value);
         Assert.Equal(items.Count, companies.Count);
+    }
+
+    [Fact]
+    public async Task GetCompany_UserIsNull_ShouldThrowNullRefferenceException()
+    {
+        var companies = GetCompanys();
+        mockRepo.Setup(m => m.GetCompaniesAsync(false, It.IsAny<bool>())).ReturnsAsync(companies);
+        userManager.Setup(x => x.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(() => null);
+
+        await Assert.ThrowsAsync<ArgumentNullException>(async () => await sut.GetCompany(false));
     }
 
     private List<Company> GetCompanys()
