@@ -5,11 +5,13 @@ using Companies.Shared.DTOs;
 using Domain.Contracts;
 using Domain.Models.Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -28,7 +30,11 @@ public class RepositoryControllerTests
             cfg.AddProfile<AutoMapperProfile>();
         }));
 
-        sut = new RepositoryController(mockRepo.Object, mapper);
+        var mockUserStore = new Mock<IUserStore<ApplicationUser>>();
+        var userManager = new Mock<UserManager<ApplicationUser>>(mockUserStore.Object, null, null, null, null, null, null, null, null);
+        userManager.Setup(x => x.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(new ApplicationUser());
+
+        sut = new RepositoryController(mockRepo.Object, mapper, userManager.Object);
     }
 
     [Fact]
