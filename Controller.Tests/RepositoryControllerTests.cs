@@ -75,3 +75,30 @@ public class RepositoryControllerTests
 
     }
 }
+
+
+public interface IUserService
+{
+    Task<ApplicationUser> GetUserAsync(ClaimsPrincipal principal);
+    Task<bool> IsInRoleAsync(ApplicationUser user, string role);
+}
+
+public class UserService : IUserService
+{
+    private readonly UserManager<ApplicationUser> _userManager;
+
+    public UserService(UserManager<ApplicationUser> userManager)
+    {
+        _userManager = userManager;
+    }
+
+    public async Task<ApplicationUser> GetUserAsync(ClaimsPrincipal principal)
+    {
+        return await _userManager.GetUserAsync(principal);
+    }
+
+    public async Task<bool> IsInRoleAsync(ApplicationUser user, string role)
+    {
+        return await _userManager.IsInRoleAsync(user, role);
+    }
+}
