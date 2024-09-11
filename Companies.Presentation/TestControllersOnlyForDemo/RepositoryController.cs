@@ -33,12 +33,11 @@ public class RepositoryController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CompanyDto>>> GetCompany(bool includeEmployees = false)
     {
+        var companies = await uow.Company.GetCompaniesAsync(trackChanges: false, includeEmployees);
+        var companiesDtos = mapper.Map<IEnumerable<CompanyDto>>(companies);
 
         var user = await userManager.GetUserAsync(User);
         if (user is null) ArgumentNullException.ThrowIfNull(user);
-
-        var companies = await uow.Company.GetCompaniesAsync(trackChanges: false, includeEmployees);
-        var companiesDtos = mapper.Map<IEnumerable<CompanyDto>>(companies);
 
         return Ok(companiesDtos);
     }

@@ -2,6 +2,7 @@
 using Companies.Infrastructure.Data;
 using Companies.Presentation.TestControllersOnlyForDemo;
 using Companies.Shared.DTOs;
+using Controller.Tests.Fixtures;
 using Domain.Contracts;
 using Domain.Models.Entities;
 using Microsoft.AspNetCore.Http;
@@ -16,79 +17,40 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Controller.Tests;
-public class RepositoryControllerTests
+public class RepositoryControllerTests : IClassFixture<ControllerFixture>
 {
-   // private Mock<ICompanyRepository> mockRepo;
-    private RepositoryController sut;
-    private Mock<UserManager<ApplicationUser>> userManager;
+    private readonly ControllerFixture fixture;
 
-    public RepositoryControllerTests()
+    public RepositoryControllerTests(ControllerFixture controllerFixture)
     {
-       // mockRepo = new Mock<ICompanyRepository>();
-        var mockUow = new Mock<IUnitOfWork>();
-        //  mockUow.Setup(u => u.Company).Returns(mockRepo.Object);
-        var companies = GetCompanys();
-        mockUow.Setup(u => u.Company.GetCompaniesAsync(false, false)).ReturnsAsync(companies);
-
-
-        var mapper = new Mapper(new MapperConfiguration(cfg =>
-        {
-            cfg.AddProfile<AutoMapperProfile>();
-        }));
-
-        var mockUserStore = new Mock<IUserStore<ApplicationUser>>();
-        userManager = new Mock<UserManager<ApplicationUser>>(mockUserStore.Object, null, null, null, null, null, null, null, null);
-
-        sut = new RepositoryController(mockUow.Object, mapper, userManager.Object);
+        this.fixture = controllerFixture;
     }
 
     [Fact]
     public async Task GetCompany_ShouldReturnAllCompanies()   
     {
         //Arrange
-       // var companies = GetCompanys();
-        //mockRepo.Setup(m => m.GetCompaniesAsync(false, It.IsAny<bool>())).ReturnsAsync(companies);
-        userManager.Setup(x => x.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(new ApplicationUser());
+        var companies = fixture.GetCompanies();
+        fixture.MockRepo.Setup(m => m.GetCompaniesAsync(false, It.IsAny<bool>())).ReturnsAsync(companies);
+        fixture.UserManager.Setup(x => x.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(new ApplicationUser());
 
         //Act
-        var result = await sut.GetCompany(false);
+        var result = await fixture.Sut.GetCompany(false);
 
         //Assert
         var okObjectResult = Assert.IsType<OkObjectResult>(result.Result);
         var items = Assert.IsType<List<CompanyDto>>(okObjectResult.Value);
-       // Assert.Equal(items.Count, companies.Count);
+        Assert.Equal(items.Count, companies.Count);
     }
 
     [Fact]
     public async Task GetCompany_UserIsNull_ShouldThrowNullRefferenceException()
     {
-        //var companies = GetCompanys();
-        //mockRepo.Setup(m => m.GetCompaniesAsync(false, It.IsAny<bool>())).ReturnsAsync(companies);
-        userManager.Setup(x => x.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(() => null);
+        var companies = fixture.GetCompanies();
+        fixture.MockRepo.Setup(m => m.GetCompaniesAsync(false, It.IsAny<bool>())).ReturnsAsync(companies);
+        fixture.UserManager.Setup(x => x.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(() => null);
 
-        await Assert.ThrowsAsync<ArgumentNullException>(async () => await sut.GetCompany(false));
-    }
-
-    private List<Company> GetCompanys()
-    {
-        return new List<Company>
-            {
-                new Company
-                {
-                     Id = Guid.NewGuid(),
-                     Name = "Test",
-                     Address = "Ankeborg, Sweden",
-                     Employees = new List<ApplicationUser>()
-                },
-                 new Company
-                {
-                     Id = Guid.NewGuid(),
-                     Name = "Test",
-                     Address = "Ankeborg, Sweden",
-                     Employees = new List<ApplicationUser>()
-                }
-            };
-
+        await Assert.ThrowsAsync<ArgumentNullException>(async () => await fixture.Sut.GetCompany(false));
     }
 }
 
