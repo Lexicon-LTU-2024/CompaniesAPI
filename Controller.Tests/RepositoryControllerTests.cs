@@ -25,6 +25,8 @@ public class RepositoryControllerTests
     public RepositoryControllerTests()
     {
         mockRepo = new Mock<ICompanyRepository>();
+        var mockUow = new Mock<IUnitOfWork>();
+        mockUow.Setup(u => u.Company).Returns(mockRepo.Object);
 
         var mapper = new Mapper(new MapperConfiguration(cfg =>
         {
@@ -34,7 +36,7 @@ public class RepositoryControllerTests
         var mockUserStore = new Mock<IUserStore<ApplicationUser>>();
         userManager = new Mock<UserManager<ApplicationUser>>(mockUserStore.Object, null, null, null, null, null, null, null, null);
 
-        sut = new RepositoryController(mockRepo.Object, mapper, userManager.Object);
+        sut = new RepositoryController(mockUow.Object, mapper, userManager.Object);
     }
 
     [Fact]

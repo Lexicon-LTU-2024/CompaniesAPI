@@ -16,13 +16,16 @@ namespace Companies.Presentation.TestControllersOnlyForDemo;
 [ApiController]
 public class RepositoryController : ControllerBase
 {
-    private readonly ICompanyRepository companyRepository;
+    private readonly IUnitOfWork uow;
+
+    // private readonly ICompanyRepository companyRepository;
     private readonly IMapper mapper;
     private readonly UserManager<ApplicationUser> userManager;
 
-    public RepositoryController(ICompanyRepository companyRepository, IMapper mapper, UserManager<ApplicationUser> userManager)
+    public RepositoryController(IUnitOfWork unitOfWork, IMapper mapper, UserManager<ApplicationUser> userManager)
     {
-        this.companyRepository = companyRepository;
+        this.uow = unitOfWork;
+        // this.companyRepository = companyRepository;
         this.mapper = mapper;
         this.userManager = userManager;
     }
@@ -34,7 +37,7 @@ public class RepositoryController : ControllerBase
         var user = await userManager.GetUserAsync(User);
         if (user is null) ArgumentNullException.ThrowIfNull(user);
 
-        var companies = await companyRepository.GetCompaniesAsync(includeEmployees);
+        var companies = await uow.Company.GetCompaniesAsync(trackChanges: false, includeEmployees);
         var companiesDtos = mapper.Map<IEnumerable<CompanyDto>>(companies);
 
         return Ok(companiesDtos);
