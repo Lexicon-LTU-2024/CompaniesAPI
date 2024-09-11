@@ -1,4 +1,7 @@
-﻿using Companies.Presentation.TestControllersOnlyForDemo;
+﻿using AutoMapper;
+using Companies.Infrastructure.Data;
+using Companies.Presentation.TestControllersOnlyForDemo;
+using Companies.Shared.DTOs;
 using Domain.Contracts;
 using Domain.Models.Entities;
 using Microsoft.AspNetCore.Http;
@@ -19,7 +22,13 @@ public class RepositoryControllerTests
     public RepositoryControllerTests()
     {
         mockRepo = new Mock<ICompanyRepository>();
-        sut = new RepositoryController(mockRepo.Object);
+
+        var mapper = new Mapper(new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<AutoMapperProfile>();
+        }));
+
+        sut = new RepositoryController(mockRepo.Object, mapper);
     }
 
     [Fact]
@@ -34,7 +43,7 @@ public class RepositoryControllerTests
 
         //Assert
         var okObjectResult = Assert.IsType<OkObjectResult>(result.Result);
-        var items = Assert.IsType<List<Company>>(okObjectResult.Value);
+        var items = Assert.IsType<List<CompanyDto>>(okObjectResult.Value);
         Assert.Equal(items.Count, companies.Count);
     }
 
