@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Companies.Shared.DTOs;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +18,14 @@ namespace Companies.Presentation.TestControllersOnlyForDemo
         public ActionResult Get()
         {
             return Ok("Hello from controller");
+        }
+
+        [HttpGet("dto")]
+        [AllowAnonymous]
+        public ActionResult Index2()
+        {
+            var dto = new CompanyDto { Name = "Working" };
+            return Ok(dto);
         }
     }
 }
