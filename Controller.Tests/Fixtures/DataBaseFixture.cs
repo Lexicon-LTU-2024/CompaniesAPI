@@ -28,12 +28,13 @@ public class DataBaseFixture : IDisposable
         //var builder = new DbContextOptionsBuilder().UseSqlServer(configuration.GetConnectionString("sqlConnection"));
 
         var options = new DbContextOptionsBuilder<DBContext>()
-         .UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=TestDataBase2;Trusted_Connection=True;MultipleActiveResultSets=true")
+       //  .UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=TestDataBase2;Trusted_Connection=True;MultipleActiveResultSets=true")
+         .UseInMemoryDatabase("TestDB")
          .Options;
 
         var context = new DBContext(options);
 
-        context.Database.Migrate();
+        //context.Database.Migrate();
 
         context.Companies.AddRange(
                                 [
