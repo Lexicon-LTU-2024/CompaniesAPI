@@ -13,7 +13,7 @@ namespace Companies.API.Controllers;
 
 [Route("api/companies")]
 [ApiController]
-public class CompaniesController : ControllerBase
+public class CompaniesController :  ControllerBase
 {
     private readonly IServiceManager _serviceManager;
     private readonly UserManager<ApplicationUser> userManager;

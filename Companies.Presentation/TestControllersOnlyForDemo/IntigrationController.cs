@@ -1,6 +1,8 @@
-﻿using Companies.Shared.DTOs;
+﻿using AutoMapper;
+using Companies.Shared.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +15,14 @@ namespace Companies.Presentation.TestControllersOnlyForDemo
     [ApiController]
     public class IntigrationController : ControllerBase
     {
+        private readonly IServiceManager serviceManager;
+        private readonly IMapper mapper;
+
+        public IntigrationController(IServiceManager serviceManager, IMapper mapper)
+        {
+            this.serviceManager = serviceManager;
+            this.mapper = mapper;
+        }
 
         [HttpGet]
         public ActionResult Get()
@@ -26,6 +36,17 @@ namespace Companies.Presentation.TestControllersOnlyForDemo
         {
             var dto = new CompanyDto { Name = "Working" };
             return Ok(dto);
+        } 
+        
+        [HttpGet("getall")]
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<CompanyDto>>> Index3()
+        {
+            var companies = await serviceManager.CompanyService.GetCompaniesAsync(false, false);
+            var dtos = mapper.Map<IEnumerable<CompanyDto>>(companies);  
+            return Ok(dtos);
         }
+
+
     }
 }
