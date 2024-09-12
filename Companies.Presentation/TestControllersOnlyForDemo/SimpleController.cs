@@ -24,7 +24,8 @@ public class SimpleController : ControllerBase
         this.mapper = mapper;
     }
 
-    [HttpGet]
+    //Fix for swagger need unique path
+    [HttpGet("1")]
     public async Task<ActionResult<IEnumerable<CompanyDto>>> GetCompany(bool includeEmployees = false)
     {
         if (User?.Identity?.IsAuthenticated ?? false)
@@ -37,9 +38,10 @@ public class SimpleController : ControllerBase
         }
       //  return Ok();
      
-    } 
-    
-    [HttpGet]
+    }
+
+    //Fix for swagger need unique path
+    [HttpGet("2")]
     public async Task<ActionResult<IEnumerable<CompanyDto>>> GetCompany2()
     {
         var companies = await db.Companies.ToListAsync();
