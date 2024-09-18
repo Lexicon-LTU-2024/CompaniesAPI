@@ -41,7 +41,7 @@ public static class ServiceExtensions
                         In = ParameterLocation.Header,
                         Description = "Place to add JWT with Bearer",
                         Name = "Authorization",
-                        Type = SecuritySchemeType.ApiKey,
+                        Type = SecuritySchemeType.Http,
                         Scheme = "Bearer"
                     });
 
