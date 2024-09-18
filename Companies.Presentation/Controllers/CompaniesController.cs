@@ -1,4 +1,5 @@
 ﻿using Companies.Shared.DTOs;
+using Companies.Shared.Request;
 using Domain.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -26,7 +27,7 @@ public class CompaniesController :  ControllerBase
 
     [HttpGet]
     [Authorize]
-    public async Task<ActionResult<IEnumerable<CompanyDto>>> GetCompany(bool includeEmployees)
+    public async Task<ActionResult<IEnumerable<CompanyDto>>> GetCompanys(bool includeEmployees, [FromQuery] CompanyRequestParams companyRequestParams)
     {
         //var auth = User.Identity.IsAuthenticated;
 
