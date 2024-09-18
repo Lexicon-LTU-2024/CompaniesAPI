@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Companies.Shared.DTOs;
+using Companies.Shared.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service;
@@ -42,7 +43,7 @@ namespace Companies.Presentation.TestControllersOnlyForDemo
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<CompanyDto>>> Index3()
         {
-            var companies = await serviceManager.CompanyService.GetCompaniesAsync(false, false);
+            var companies = await serviceManager.CompanyService.GetCompaniesAsync(new CompanyRequestParams(), false, false);
             var dtos = mapper.Map<IEnumerable<CompanyDto>>(companies);  
             return Ok(dtos);
         }

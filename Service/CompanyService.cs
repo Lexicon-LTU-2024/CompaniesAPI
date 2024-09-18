@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Companies.Shared.DTOs;
+using Companies.Shared.Request;
 using Domain.Contracts;
 using Domain.Models.Exeptions;
 using Service.Contracts;
@@ -21,9 +22,9 @@ public class CompanyService : ICompanyService
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<CompanyDto>> GetCompaniesAsync(bool includeEmployees, bool trackChanges = false) =>
-         includeEmployees ? _mapper.Map<IEnumerable<CompanyDto>>(await _uow.Company.GetCompaniesAsync(trackChanges, includeEmployees))
-                          : _mapper.Map<IEnumerable<CompanyDto>>(await _uow.Company.GetCompaniesAsync(trackChanges));
+    public async Task<IEnumerable<CompanyDto>> GetCompaniesAsync(CompanyRequestParams companyRequestParams, bool includeEmployees, bool trackChanges = false) =>
+         includeEmployees ? _mapper.Map<IEnumerable<CompanyDto>>(await _uow.Company.GetCompaniesAsync(companyRequestParams, trackChanges, includeEmployees))
+                          : _mapper.Map<IEnumerable<CompanyDto>>(await _uow.Company.GetCompaniesAsync(companyRequestParams, trackChanges));
 
     public async Task<CompanyDto> GetCompanyAsync(Guid id, bool trackChanges = false)
     {

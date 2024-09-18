@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Companies.Shared.DTOs;
+using Companies.Shared.Request;
 using Domain.Contracts;
 using Domain.Models.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -33,7 +34,7 @@ public class RepositoryController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CompanyDto>>> GetCompany(bool includeEmployees = false)
     {
-        var companies = await uow.Company.GetCompaniesAsync(trackChanges: false, includeEmployees);
+        var companies = await uow.Company.GetCompaniesAsync(new CompanyRequestParams(), trackChanges: false, includeEmployees);
         var companiesDtos = mapper.Map<IEnumerable<CompanyDto>>(companies);
 
         var user = await userManager.GetUserAsync(User);

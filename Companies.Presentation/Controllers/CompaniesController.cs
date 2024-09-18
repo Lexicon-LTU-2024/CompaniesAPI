@@ -26,7 +26,7 @@ public class CompaniesController :  ControllerBase
     }
 
     [HttpGet]
-    [Authorize]
+   // [Authorize]
     public async Task<ActionResult<IEnumerable<CompanyDto>>> GetCompanys(bool includeEmployees, [FromQuery] CompanyRequestParams companyRequestParams)
     {
         //var auth = User.Identity.IsAuthenticated;
@@ -34,7 +34,7 @@ public class CompaniesController :  ControllerBase
         //var userName = userManager.GetUserName(User);
         //var user = await userManager.GetUserAsync(User);
 
-        var companyDtos = await _serviceManager.CompanyService.GetCompaniesAsync(includeEmployees);
+        var companyDtos = await _serviceManager.CompanyService.GetCompaniesAsync(companyRequestParams, includeEmployees);
         return Ok(companyDtos);
     }
 

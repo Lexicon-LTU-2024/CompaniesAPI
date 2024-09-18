@@ -31,7 +31,7 @@ public class RepositoryControllerTests : IClassFixture<ControllerFixture>
     {
         //Arrange
         var companies = fixture.GetCompanies();
-        fixture.MockRepo.Setup(m => m.GetCompaniesAsync(false, It.IsAny<bool>())).ReturnsAsync(companies);
+        fixture.MockRepo.Setup(m => m.GetCompaniesAsync(null, false, It.IsAny<bool>())).ReturnsAsync(companies);
         fixture.UserManager.Setup(x => x.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(new ApplicationUser());
 
         //Act
@@ -47,7 +47,7 @@ public class RepositoryControllerTests : IClassFixture<ControllerFixture>
     public async Task GetCompany_UserIsNull_ShouldThrowNullRefferenceException()
     {
         var companies = fixture.GetCompanies();
-        fixture.MockRepo.Setup(m => m.GetCompaniesAsync(false, It.IsAny<bool>())).ReturnsAsync(companies);
+        fixture.MockRepo.Setup(m => m.GetCompaniesAsync(null, false, It.IsAny<bool>())).ReturnsAsync(companies);
         fixture.UserManager.Setup(x => x.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(() => null);
 
         await Assert.ThrowsAsync<ArgumentNullException>(async () => await fixture.Sut.GetCompany(false));
