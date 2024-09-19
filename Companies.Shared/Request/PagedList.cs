@@ -5,7 +5,7 @@ namespace Companies.API.Paging
     public class PagedList<T> 
     {
         public IEnumerable<T> Companies { get; }
-        public MetaData MetaData { get; set; }
+        public MetaData MetaData { get; }
 
         public PagedList(List<T> items, int count, int pageNumber, int pageSize)
         {
