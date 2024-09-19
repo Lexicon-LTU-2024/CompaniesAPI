@@ -36,9 +36,9 @@ namespace Companies.Infrastructure.Data
                 try
                 {
                     await CreateRolesAsync(new[] {adminRole, employeeRole});
-                    var companies = GenerateCompanies(4);
+                    var companies = GenerateCompanies(50);
                     await db.AddRangeAsync(companies);
-                    await GenerateEmployeesAsync(30, companies.ToList());
+                    await GenerateEmployeesAsync(300, companies.ToList());
                     await db.SaveChangesAsync();
                 }
                 catch (Exception ex)

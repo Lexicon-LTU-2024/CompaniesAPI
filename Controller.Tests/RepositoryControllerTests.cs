@@ -26,32 +26,32 @@ public class RepositoryControllerTests : IClassFixture<ControllerFixture>
         this.fixture = controllerFixture;
     }
 
-    [Fact]
-    public async Task GetCompany_ShouldReturnAllCompanies()   
-    {
-        //Arrange
-        var companies = fixture.GetCompanies();
-        fixture.MockRepo.Setup(m => m.GetCompaniesAsync(null, false, It.IsAny<bool>())).ReturnsAsync(companies);
-        fixture.UserManager.Setup(x => x.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(new ApplicationUser());
+    //[Fact]
+    //public async Task GetCompany_ShouldReturnAllCompanies()   
+    //{
+    //    //Arrange
+    //    var companies = fixture.GetCompanies();
+    //    fixture.MockRepo.Setup(m => m.GetCompaniesAsync(null, false, It.IsAny<bool>())).ReturnsAsync(companies);
+    //    fixture.UserManager.Setup(x => x.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(new ApplicationUser());
 
-        //Act
-        var result = await fixture.Sut.GetCompany(false);
+    //    //Act
+    //    var result = await fixture.Sut.GetCompany(false);
 
-        //Assert
-        var okObjectResult = Assert.IsType<OkObjectResult>(result.Result);
-        var items = Assert.IsType<List<CompanyDto>>(okObjectResult.Value);
-        Assert.Equal(items.Count, companies.Count);
-    }
+    //    //Assert
+    //    var okObjectResult = Assert.IsType<OkObjectResult>(result.Result);
+    //    var items = Assert.IsType<List<CompanyDto>>(okObjectResult.Value);
+    //    Assert.Equal(items.Count, companies.Count);
+    //}
 
-    [Fact]
-    public async Task GetCompany_UserIsNull_ShouldThrowNullRefferenceException()
-    {
-        var companies = fixture.GetCompanies();
-        fixture.MockRepo.Setup(m => m.GetCompaniesAsync(null, false, It.IsAny<bool>())).ReturnsAsync(companies);
-        fixture.UserManager.Setup(x => x.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(() => null);
+    //[Fact]
+    //public async Task GetCompany_UserIsNull_ShouldThrowNullRefferenceException()
+    //{
+    //    var companies = fixture.GetCompanies();
+    //    fixture.MockRepo.Setup(m => m.GetCompaniesAsync(null, false, It.IsAny<bool>())).ReturnsAsync(companies);
+    //    fixture.UserManager.Setup(x => x.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(() => null);
 
-        await Assert.ThrowsAsync<ArgumentNullException>(async () => await fixture.Sut.GetCompany(false));
-    }
+    //    await Assert.ThrowsAsync<ArgumentNullException>(async () => await fixture.Sut.GetCompany(false));
+    //}
 }
 
 

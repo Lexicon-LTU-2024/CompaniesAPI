@@ -2,9 +2,9 @@
 
 namespace Companies.API.Paging
 {
-    public class PagedList<T> : List<T>
+    public class PagedList<T> 
     {
-
+        public IEnumerable<T> Companies { get; }
         public MetaData MetaData { get; set; }
 
         public PagedList(List<T> items, int count, int pageNumber, int pageSize)
@@ -17,7 +17,7 @@ namespace Companies.API.Paging
                     totalCount: count
                 );
 
-            AddRange(items);
+            Companies = items;
         }
 
         public static async Task<PagedList<T>> CreateAsync(

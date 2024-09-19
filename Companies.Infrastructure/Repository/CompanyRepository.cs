@@ -1,4 +1,5 @@
-﻿using Companies.Infrastructure.Data;
+﻿using Companies.API.Paging;
+using Companies.Infrastructure.Data;
 using Companies.Shared.Request;
 using Domain.Contracts;
 using Domain.Models.Entities;
@@ -20,17 +21,15 @@ public class CompanyRepository : RepositoryBase<Company>, ICompanyRepository
                     .FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<Company>> GetCompaniesAsync(CompanyRequestParams companyRequestParams, bool trackChanges, bool includeEmployees = false)
+    public async Task<PagedList<Company>> GetCompaniesAsync(CompanyRequestParams companyRequestParams, bool trackChanges, bool includeEmployees = false)
     {
-        return includeEmployees ? await FindAll(trackChanges)
+        var companies = includeEmployees ?   FindAll(trackChanges)
                                             .Include(c => c.Employees)
-                                            .Skip((companyRequestParams.PageNumber - 1) * companyRequestParams.PageSize)
-                                            .Take(companyRequestParams.PageSize)
-                                            .ToListAsync() :
-                                  
-                                  await FindAll(trackChanges)
-                                            .Skip((companyRequestParams.PageNumber - 1) * companyRequestParams.PageSize)
-                                            .Take(companyRequestParams.PageSize)
-                                            .ToListAsync();
+                                            :
+
+                                             FindAll(trackChanges);
+                                            
+
+        return await PagedList<Company>.CreateAsync(companies, companyRequestParams.PageNumber, companyRequestParams.PageSize);
     }
 }
