@@ -34,7 +34,7 @@ public class RepositoryController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CompanyDto>>> GetCompany(bool includeEmployees = false)
     {
-        var companies = await uow.Company.GetCompaniesAsync(new CompanyRequestParams(), trackChanges: false, includeEmployees);
+        var companies = await uow.Company.GetCompaniesAsync(new CompanyRequestParams(), trackChanges: false);
         var companiesDtos = mapper.Map<IEnumerable<CompanyDto>>(companies);
 
         var user = await userManager.GetUserAsync(User);

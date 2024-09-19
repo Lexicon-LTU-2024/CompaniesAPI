@@ -29,9 +29,9 @@ public class CompaniesController :  ControllerBase
 
     [HttpGet]
    // [Authorize]
-    public async Task<ActionResult<IEnumerable<CompanyDto>>> GetCompanys(bool includeEmployees, [FromQuery] CompanyRequestParams companyRequestParams)
+    public async Task<ActionResult<IEnumerable<CompanyDto>>> GetCompanys([FromQuery] CompanyRequestParams companyRequestParams)
     {
-        var pagedResult = await _serviceManager.CompanyService.GetCompaniesAsync(companyRequestParams, includeEmployees);
+        var pagedResult = await _serviceManager.CompanyService.GetCompaniesAsync(companyRequestParams);
 
         Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(pagedResult.metaData));
 

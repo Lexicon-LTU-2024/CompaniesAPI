@@ -43,7 +43,7 @@ namespace Companies.Presentation.TestControllersOnlyForDemo
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<CompanyDto>>> Index3()
         {
-            var companies = await serviceManager.CompanyService.GetCompaniesAsync(new CompanyRequestParams(), false, false);
+            var companies = await serviceManager.CompanyService.GetCompaniesAsync(new CompanyRequestParams(), false);
             var dtos = mapper.Map<IEnumerable<CompanyDto>>(companies);  
             return Ok(dtos);
         }

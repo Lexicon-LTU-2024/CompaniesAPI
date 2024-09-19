@@ -19,5 +19,5 @@ public abstract class RequestParams
 
 public class CompanyRequestParams : RequestParams
 {
-    
+    public bool IncludeEmployees { get; set; }
 }

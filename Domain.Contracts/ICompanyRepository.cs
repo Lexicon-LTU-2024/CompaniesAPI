@@ -5,7 +5,7 @@ using Domain.Models.Entities;
 namespace Domain.Contracts;
 public interface ICompanyRepository
 {
-    Task<PagedList<Company>> GetCompaniesAsync(CompanyRequestParams companyRequestParams, bool trackChanges, bool includeEmployees = false);
+    Task<PagedList<Company>> GetCompaniesAsync(CompanyRequestParams companyRequestParams, bool trackChanges);
     Task<Company?> GetCompanyAsync(Guid id, bool trackChanges);
 
     Task CreateAsync(Company company);

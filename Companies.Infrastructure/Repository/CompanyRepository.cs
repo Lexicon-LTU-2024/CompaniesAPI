@@ -21,13 +21,12 @@ public class CompanyRepository : RepositoryBase<Company>, ICompanyRepository
                     .FirstOrDefaultAsync();
     }
 
-    public async Task<PagedList<Company>> GetCompaniesAsync(CompanyRequestParams companyRequestParams, bool trackChanges, bool includeEmployees = false)
+    public async Task<PagedList<Company>> GetCompaniesAsync(CompanyRequestParams companyRequestParams, bool trackChanges)
     {
-        var companies = includeEmployees ?   FindAll(trackChanges)
-                                            .Include(c => c.Employees)
-                                            :
-
-                                             FindAll(trackChanges);
+        var companies = companyRequestParams.IncludeEmployees ?   FindAll(trackChanges)
+                                                                     .Include(c => c.Employees)
+                                                                     :
+                                                                  FindAll(trackChanges);
                                             
 
         return await PagedList<Company>.CreateAsync(companies, companyRequestParams.PageNumber, companyRequestParams.PageSize);

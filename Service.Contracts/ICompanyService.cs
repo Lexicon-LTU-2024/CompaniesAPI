@@ -7,6 +7,6 @@ namespace Service.Contracts;
 
 public interface ICompanyService
 {
-    Task<(IEnumerable<CompanyDto> companyDtos, MetaData metaData)> GetCompaniesAsync(CompanyRequestParams companyRequestParams,bool includeEmployees, bool trackChanges = false);
+    Task<(IEnumerable<CompanyDto> companyDtos, MetaData metaData)> GetCompaniesAsync(CompanyRequestParams companyRequestParams, bool trackChanges = false);
     Task<CompanyDto> GetCompanyAsync(Guid id, bool trackChanges = false);
 }
